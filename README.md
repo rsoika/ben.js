@@ -24,14 +24,26 @@ There is no restriction to any JavaScript framework without the need for JQuery.
 
 The view in ben.js is the HTML part of your applicaiton. With custom attributes you can bind your view to a controller:
 
-    <div ben-control="myController" />
+    <div ben-controller="myController" />
        <input type="text" value="" ben-model="myModel" />
        ....
     </div>
     
 
 
+# The Model
 
-
+The model can be any JavaScript object. There are no restrictions or specific requirements to the model object:
 
     
+     function Employee(id, city, date) {
+       this.id = id;
+	   this.city = city;
+       this.date = date;
+     }
+
+# The Controller
+
+The conroller in ben.js is a 
+
+# Naming conventions    
