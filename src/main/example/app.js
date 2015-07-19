@@ -20,7 +20,7 @@ Demo.initWorkitem = function(f) {
 	// replace the model...
 	//this.model= new Employee('Hugo', 'Munich', '19.7.2015')
 	
-	Demo.refresh();
+	Demo.push();
 }
 
 

@@ -7,7 +7,7 @@ var Ben = new Ben();
 function Ben() {
 
 	console.debug('------------------------');
-	console.debug('Ben.js: Version 1.0.0');
+	console.debug('Ben.js: Version 0.0.1');
 	console.debug('------------------------');
 
 	var that = this;
@@ -38,29 +38,22 @@ function BenController(id, model, controller) {
 	this.model = model;
 	this.controller = controller;
 
-	/*
-	 * refresh the view
+	/**
+	 * Refreshs the view and push the model data into the view
 	 */
-	this.refresh = function() {
-		console.debug("updateing view '" + this.id + "': Model=", this.model);
+	this.push = function() {
+		console.debug("push model into view '" + this.id + "': Model=", this.model);
 		var selectorId = "[ben-controller='" + this.id + "']";
-
-		/* clear input fields... */
-		// clear_form_elements(this.id);
 		update_form_elements(this.id, this.model);
-
 	}
 
-	this.read = function() {
-		console.debug(this.id + " read view...");
+	/**
+	 * Pulls the model out of the view and update the model data
+	 */
+	this.pull = function() {
 		var selectorId = "[ben-controller='" + this.id + "']";
-
-		// read all keys...
-
-		// alert('read...');
-
 		read_form_elements(this.id, this.model);
-
+		console.debug("pull model from view '" + this.id +"': Model=" , this.model);
 	}
 }
 
@@ -135,7 +128,6 @@ function read_form_elements(controllerid, model) {
 			case 'textarea':
 				modelValue = $(this).val();
 				model[modelField] = modelValue;
-				console.log("Updating Model: ", model);
 				break;
 			case 'checkbox':
 			case 'radio':
@@ -152,7 +144,7 @@ $(document).ready(function() {
 	console.debug("starting application...");
 	// refresh all registered controllers....
 	$.each(Ben._controllers, function(index, contrl) {
-		contrl.refresh();
+		contrl.push();
 	});
 
 });
