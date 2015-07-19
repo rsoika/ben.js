@@ -1,0 +1,40 @@
+
+<div class="imixs-form-panel">
+
+
+	<h3>
+		City: <span ben-model="city" />
+	</h3>
+
+	<div class="form-section col-6">
+
+		<dl>
+			<dt>Name</dt>
+			<dd>
+				<input type="text" value="test" ben-model="name" />
+			</dd>
+
+			<dt>Kein Model Feld</dt>
+			<dd>
+				<input type="text" value="test" ben-model="someotherfield" />
+			</dd>
+			<dt>Dummy</dt>
+			<dd>
+				<input type="text" value="sepp" />
+			</dd>
+		</dl>
+
+		<input type="button" value="get model" onclick="Demo.pull()"
+			class="btn" /> <input type="button" value="init model"
+			onclick="Demo.initWorkitem()" class="btn" /> <input type="button"
+			value="load read-only-mode" onclick="Demo.load('my-controller-readonly.html')"
+			class="btn" />
+
+
+
+
+
+	</div>
+
+	<div id="form1" />
+</div>

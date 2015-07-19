@@ -14,10 +14,10 @@ function Ben() {
 
 	this._controllers = new Array();
 
-	this.createController = function(id, model, appController) {
+	this.createController = function(id, model, view, appController) {
 		console.debug('register new controller: \'' + id + '\'');
 
-		var aController = new BenController(id, model, appController);
+		var aController = new BenController(id, model, view, appController);
 		that._controllers.push(aController);
 
 		if (appController)
@@ -33,16 +33,19 @@ function Ben() {
 
 }
 
-function BenController(id, model, controller) {
+function BenController(id, model, view, controller) {
+	var that = this;
 	this.id = id;
 	this.model = model;
+	this.view = view;
 	this.controller = controller;
 
 	/**
 	 * Refreshs the view and push the model data into the view
 	 */
 	this.push = function() {
-		console.debug("push model into view '" + this.id + "': Model=", this.model);
+		console.debug("push model into view '" + this.id + "': Model=",
+				this.model);
 		var selectorId = "[ben-controller='" + this.id + "']";
 		update_form_elements(this.id, this.model);
 	}
@@ -53,8 +56,71 @@ function BenController(id, model, controller) {
 	this.pull = function() {
 		var selectorId = "[ben-controller='" + this.id + "']";
 		read_form_elements(this.id, this.model);
-		console.debug("pull model from view '" + this.id +"': Model=" , this.model);
+		console.debug("pull model from view '" + this.id + "': Model=",
+				this.model);
 	}
+
+	/**
+	 * loads a the view for the current controller. If no URL is provided the
+	 * method check the view property. If no view provided the url defaults to
+	 * id+'.html'
+	 */
+	this.load = function(url) {
+		if (!url) {
+			// test view
+			if (that.view) {
+				url=that.view;
+			} else {
+				// default
+				url = this.id + ".html";
+			}
+		}
+		console.debug("load view '" + url + "'...");
+
+		var selectorId = "[ben-controller='" + this.id + "']";
+
+		$(selectorId).load(url, function(response, status, xhr) {
+			if (status == "error") {
+				// default info
+				// $(selectorId).html("<!-- view not found -->");
+				console.debug("controller-view '" + url + "' not found!");
+				that.push();
+			} else {
+				// update view
+				that.push();
+				// update route...browser url
+				//document.location.href = "#"+url;
+
+			}
+		});
+
+	}
+}
+
+/**
+ * this method searches all 'ben-template' elements and loads its content
+ */
+function load_templates() {
+
+	$('[ben-template]').each(function() {
+
+		// check if input is a ben-model
+		var url = $(this).attr("ben-template");
+		if (url) {
+			// load the template...
+			$(this).load(url, function(response, status, xhr) {
+				if (status == "error") {
+					// not found!
+					var template_error = "template: '" + url + "' not found";
+					console.debug(template_error);
+					$(selector).html("<!-- " + template_error + " -->");
+				} else {
+					console.debug("template: '" + url + "' loaded");
+				}
+			});
+		}
+	});
+
 }
 
 /**
@@ -142,9 +208,17 @@ function read_form_elements(controllerid, model) {
 $(document).ready(function() {
 
 	console.debug("starting application...");
-	// refresh all registered controllers....
+
+	// load templates...
+	load_templates();
+
+	// load views for all registered controllers and push the model....
 	$.each(Ben._controllers, function(index, contrl) {
-		contrl.push();
+		if (contrl.view)
+			contrl.load();
+		else
+			// no view defined!
+			contrl.push();
 	});
 
 });

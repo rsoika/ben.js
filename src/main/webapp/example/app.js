@@ -8,7 +8,7 @@ function Employee(name, city, date) {
 }
 
 var Demo = Ben.createController("my-controller", new Employee('Anna',
-		'Munich', '19.7.2015'));
+		'Munich', '19.7.2015'),"my-controller.html");
 
 
 
@@ -22,6 +22,31 @@ Demo.initWorkitem = function(f) {
 	
 	Demo.push();
 }
+
+
+
+
+
+// load a form
+Demo.loadForm1 = function(f) {
+	var url="form1.html";
+	$("#form1").load(
+			url,
+			function(response, status, xhr) {
+				if (status == "error") {
+					// default info
+					$("#fomr1").html(
+							"<p>Form not found</p>");
+				} else {
+					// update view
+					document.location.href="#x";
+					Demo.push();
+				}
+			});
+	
+	
+}
+
 
 
 
