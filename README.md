@@ -50,7 +50,7 @@ Ben.JS provides a conroller instance for each view which you want to bind to a m
     		'Munich', '19.7.2015'));
 
 
-This example creates a new Controller called 'my-controller' with an instance of the Employee Model declared before. The following HTML snipped shows how to define the corresponding view:
+This example creates a new Controller called 'my-controller' with an instance of the Employee Model declared before. The following HTML snipped shows how to define a corresponding view:
 
     <div ben-controller="my-controller">
        Name: <input type="text" value="" ben-model="name" />
@@ -59,11 +59,52 @@ This example creates a new Controller called 'my-controller' with an instance of
 
 Ben.JS will put the name of the Employee into the Input Field when the application is loaded. The save button simply calls the pull() method provided by the controller to update the model with the new data.
 
-
 # Templates
+Ben.JS provides a templating concept which allows you to separate HTML fragments. In the main html page you can define
+a template to be loaded in any location. See the following example index.html:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    <head><title>Ben.js Demo</title></head>
+    <body>
+    		<div ben-template="header.html"></div>
+    			<div ben-controller="my-controller">
+    			</div>
+    		<script type="text/javascript" src="../lib/jquery-2.1.4.min.js"></script>
+    		<script type="text/javascript" src="..//lib/ben.js"></script>
+    		<script type="text/javascript" src="app.js"></script>
+     </body>
+     </html>
+
+This example will load the 'header.html' at the beginning of the body section.
+
+## View Templates
+Ben.JS tries to load a view-template for each created controler. The naming convention for this template is [ID].html. So in the example above Ben.JS tries to load the page 'my-controller.html' into the controller section. 
+If the view did not exists Ben.JS will print a warning into the browser console. 
+You can also define a controller with an alternative view during creation:
+
+    var Demo = Ben.createController("my-controller", new Employee('Anna',
+    		'Munich', '19.7.2015'),'my-special-view.html);
+
+Additional you can change the view during runtime by calling the load(url) method from the controller:
+
+    Demo.load('another-view.html');
+
 
 
 # Routes
 
 
 # Naming conventions    
+There are not much naming conventions in Ben.JS. You are free to build your application in your own style.
+If you define a controller Ben.JS tries to load the corresponging view based on the ID of the controller.
+For that you should provide a view template for each controller.
+Example:
+
+    var Demo = Ben.createController("my-controller", model);
+    // view-template should be named: my-controller.html
+
+
+
