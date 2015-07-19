@@ -11,6 +11,10 @@ var Demo = Ben.createController("my-controller", new Employee('Anna',
 		'Munich', '19.7.2015'),"my-controller.html");
 
 
+// register a new Route
+var IndexRoute=Ben.createRoute('route1',['my-controller']);
+
+
 
 //select a new workitem
 Demo.initWorkitem = function(f) {

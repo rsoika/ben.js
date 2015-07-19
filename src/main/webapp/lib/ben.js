@@ -13,9 +13,14 @@ function Ben() {
 	var that = this;
 
 	this._controllers = new Array();
+	this._routes = new Array();
 
 	this.createController = function(id, model, view, appController) {
 		console.debug('register new controller: \'' + id + '\'');
+		if (!view) {
+			// define default view
+			view = id + ".html";
+		}
 
 		var aController = new BenController(id, model, view, appController);
 		that._controllers.push(aController);
@@ -27,8 +32,31 @@ function Ben() {
 
 	}
 
-	this.findController = function(f) {
-		return that._controllers[0];
+	this.createRoute = function(url, controllers) {
+		console.debug('register new route: \'' + url + '\'');
+
+		var aRoute = new BenRouter(url, controllers);
+		that._routes.push(aRoute);
+
+		return aRoute;
+
+	}
+
+	/**
+	 * returns a registered controller by its id.
+	 */
+	this.findControllerByID = function(id) {
+		var result;
+		// iterate over all controllers
+		$.each(Ben._controllers, function(index, contrl) {
+			if (contrl.id == id)
+				result= contrl;
+		});
+		
+		if (result)
+			return result;
+		else
+			console.log("ERROR: Controler '" + id + "' not registered");
 	}
 
 }
@@ -39,6 +67,13 @@ function BenController(id, model, view, controller) {
 	this.model = model;
 	this.view = view;
 	this.controller = controller;
+
+	/**
+	 * Initializes the controller
+	 */
+	this.init = function() {
+		console.debug("init controller '" + this.id + "'...");
+	}
 
 	/**
 	 * Refreshs the view and push the model data into the view
@@ -69,7 +104,7 @@ function BenController(id, model, view, controller) {
 		if (!url) {
 			// test view
 			if (that.view) {
-				url=that.view;
+				url = that.view;
 			} else {
 				// default
 				url = this.id + ".html";
@@ -88,11 +123,42 @@ function BenController(id, model, view, controller) {
 			} else {
 				// update view
 				that.push();
-				// update route...browser url
-				//document.location.href = "#"+url;
+				
 
 			}
 		});
+
+	}
+}
+
+function BenRouter(url, controllers) {
+	var that = this;
+	this.controllers = controllers;
+	this.url = url;
+
+	/**
+	 * calls a route.....
+	 */
+	this.route = function() {
+		console.debug("route '" + that.url + "'...");
+
+		// load views for all registered controllers and push the model....
+		$.each(that.controllers, function(index, contrlid) {
+
+			contrl = Ben.findControllerByID(contrlid);
+			if (contrl) {
+				contrl.init();
+				if (contrl.view)
+					contrl.load();
+				else
+					// no view defined!
+					contrl.push();
+			}
+		});
+		
+		// update route...browser url
+		 document.location.href = "#"+that.url;
+		
 
 	}
 }
