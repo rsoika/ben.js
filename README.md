@@ -46,18 +46,11 @@ The model can be any JavaScript object. There are no restrictions or specific re
 
 Ben.JS provides a conroller instance for each view which you want to bind to a model. There for you simply call the method createController to get such an instance. See the following example:
 
-
-    function Employee(name, city, date) {
-    	this.name = name;
-    	this.city = city;
-    	this.date = date;
-    }
-    
     var Demo = Ben.createController("my-controller", new Employee('Anna',
     		'Munich', '19.7.2015'));
 
 
-This example defines a Model Object 'Employee' and creates a new Controller called 'my-controller' with an instance of the Model. The following HTML snipped shows how to define the view:
+This example creates a new Controller called 'my-controller' with an instance of the Employee Model declared before. The following HTML snipped shows how to define the corresponding view:
 
     <div ben-controller="my-controller">
        Name: <input type="text" value="" ben-model="name" />
