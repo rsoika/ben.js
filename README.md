@@ -22,14 +22,14 @@ There is no restriction to any JavaScript framework without the need for JQuery.
 
 # The View
 
-The view in ben.js is the HTML part of your applicaiton. With custom attributes you can bind your view to a controller:
+The view in Ben.JS is the HTML part of your applicaiton. With custom attributes you can bind your view to a controller:
 
     <div ben-controller="myController" />
        <input type="text" value="" ben-model="myModel" />
        ....
     </div>
     
-
+Ben.JS will automatically push the model into the view or pulls out any changes to your model if you need to store the model on a server.
 
 # The Model
 
@@ -44,6 +44,33 @@ The model can be any JavaScript object. There are no restrictions or specific re
 
 # The Controller
 
-The conroller in ben.js is a 
+Ben.JS provides a conroller instance for each view which you want to bind to a model. There for you simply call the method createController to get such an instance. See the following example:
+
+
+    function Employee(name, city, date) {
+    	this.name = name;
+    	this.city = city;
+    	this.date = date;
+    }
+    
+    var Demo = Ben.createController("my-controller", new Employee('Anna',
+    		'Munich', '19.7.2015'));
+
+
+This example defines a Model Object 'Employee' and creates a new Controller called 'my-controller' with an instance of the Model. The following HTML snipped shows how to define the view:
+
+    <div ben-controller="my-controller">
+       Name: <input type="text" value="" ben-model="name" />
+    </div>	
+    <input type="button" value="save" onclick="Demo.pull()"  />
+
+Ben.JS will put the name of the Employee into the Input Field when the application is loaded. The save button simply calls the pull() method provided by the controller to update the model with the new data.
+
+
+# Templates
+
+
+# Routes
+
 
 # Naming conventions    
