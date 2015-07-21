@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Ben.js Demo</title>
+
+
+<link href="../../css/creatix-basic.css" rel="stylesheet" />
+<link href="../../css/creatix-forms.css" rel="stylesheet" />
+<link href="../../css/creatix-layout.css" rel="stylesheet" />
+<link href="../../css/custom.css" rel="stylesheet" />
+
+
+</head>
+
+<body>
+
+
+	<div id="container">
+
+
+		<h1>Ben.js - Model-Example</h1>
+
+
+		<div class="row">
+			<div ben-controller="my-controller">
+				<h3>Form:</h3>
+				<dl>
+					<dt>Name</dt>
+					<dd>
+						<input type="text" value="test" ben-model="name" />
+					</dd>
+					
+					<dt>City</dt>
+					<dd>
+						<input type="text" value="test" ben-model="city" />
+					</dd>
+					
+					<dt>Date</dt>
+					<dd>
+						<input type="text" value="test" ben-model="date" />
+					</dd>
+
+				</dl>
+
+	
+				<input type="button" value="pull model" onclick="Demo.pull()"
+			class="btn" /> 
+
+				
+				</div>
+
+			</div>
+		</div>
+
+
+
+
+		<script type="text/javascript" src="../../lib/jquery-2.1.4.min.js"></script>
+		<script type="text/javascript" src="../../lib/ben.js"></script>
+		<script type="text/javascript" src="app.js"></script>
+</body>
+
+</html>

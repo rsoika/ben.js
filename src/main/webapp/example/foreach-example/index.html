@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Ben.js Demo</title>
+
+
+<link href="../../css/creatix-basic.css" rel="stylesheet" />
+<link href="../../css/creatix-forms.css" rel="stylesheet" />
+<link href="../../css/creatix-layout.css" rel="stylesheet" />
+<link href="../../css/custom.css" rel="stylesheet" />
+
+
+</head>
+
+<body>
+
+
+	<div id="container">
+
+
+		<h1>Ben.js - For-Each-Example</h1>
+
+
+		<div class="row">
+			<div ben-controller="my-controller">
+
+
+				<h3>For-Each Block: count=<span ben-model="model.employers.length*3"</span></h3>
+
+				<div ben-for-each="employers">
+				
+
+					Test=<span ben-model="test"></span> 
+					<br /> 
+					City=<span ben-model="city"></span>
+
+					<hr />
+				
+				</div>
+				
+				Test singel value=<span ben-model="test"></span> 
+				
+				
+				
+			</div>
+			
+		</div>
+
+
+
+
+		<script type="text/javascript" src="../../lib/jquery-2.1.4.min.js"></script>
+		<script type="text/javascript" src="../../lib/ben.js"></script>
+		<script type="text/javascript" src="app.js"></script>
+</body>
+
+</html>
