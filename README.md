@@ -14,6 +14,9 @@ To setup ben.js you need to provide jQuery in the latest version and Ben.JS in y
     	   <script type="text/javascript" src="app.js"></script>
     	   .....
 
+### Examples
+The project includes a set of example pages giving you an idea how you can use Ben.JS. Just checkout the sources. You can deploy the application on a web server or run the examples locally. 
+
 ### Combination with other frameworks
 There is no restriction to any JavaScript framework without the need for JQuery. So you are free to combine this framework with any other concept including Angular.js, Ember.js or React.
 
