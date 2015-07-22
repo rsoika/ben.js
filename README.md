@@ -126,3 +126,6 @@ Example:
 
 Ben.JS prints the result of the different method calls into the browsers log. So you should take a look on the console log if something is not working as expected. 
 
+
+# Join this Project
+If you have any questions or ideas just open a new issue in the issue tracker. https://github.com/rsoika/ben.js/issues
