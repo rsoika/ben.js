@@ -114,13 +114,8 @@ In this example you can see that the data-binding is not restricted to object va
 tbd. 
 
 # Naming conventions    
-There are not much naming conventions in Ben.JS. You are free to build your application in your own style.
-If you define a controller Ben.JS tries to load the corresponging view based on the ID of the controller.
-For that you should provide a view template for each controller.
-Example:
+There are no special naming conventions in Ben.JS. You are free to build your application in your own style.
 
-    var Demo = Ben.createController("my-controller", model);
-    // view-template should be named: my-controller.html
 
 ##Logging and debugging
 

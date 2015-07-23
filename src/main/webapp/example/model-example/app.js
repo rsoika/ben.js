@@ -10,7 +10,7 @@ function Employee(name, city, date) {
 }
 
 var Demo = Ben.createController("my-controller", new Employee('Anna',
-		'Munich', '19.7.2015'),"my-controller.html");
+		'Munich', '19.7.2015'));
 
 
 // register a new Route

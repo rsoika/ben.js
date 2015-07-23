@@ -17,19 +17,12 @@ function Ben() {
 
 	this.createController = function(id, model, view, appController) {
 		console.debug('register new controller: \'' + id + '\'');
-		if (!view) {
-			// define default view
-			view = id + ".html";
-		}
-
 		var aController = new BenController(id, model, view, appController);
 		that._controllers.push(aController);
-
 		if (appController)
 			return appController;
 		else
 			return aController;
-
 	}
 
 	this.createRoute = function(url, controllers) {
@@ -73,6 +66,11 @@ function BenController(id, model, view, controller) {
 	 */
 	this.init = function() {
 		console.debug("init controller '" + this.id + "'...");
+		if (that.view)
+			that.load();
+		else
+			// no view defined just push the model!
+			that.push();
 	}
 
 	/**
@@ -155,28 +153,32 @@ function BenController(id, model, view, controller) {
 			// test view
 			if (that.view) {
 				url = that.view;
-			} else {
-				// default
-				url = this.id + ".html";
 			}
 		}
-
-		var selectorId = "[ben-controller='" + this.id + "']";
-		$(selectorId).each(function() {
-			console.debug("load view '" + url + "'...");
-			$(this).load(url, function(response, status, xhr) {
-				if (status == "error") {
-					// default info
-					 $(this).prepend("<!-- WARNING controller-view '" + url + "' not found -->");
-					console.debug("controller-view '" + url + "' not found!");
-					that.push();
-				} else {
-					// update view
-					that.push();
-				}
-			});
-		});
-
+		if (url) {
+			var selectorId = "[ben-controller='" + this.id + "']";
+			$(selectorId).each(
+					function() {
+						console.debug("load view '" + url + "'...");
+						$(this).load(
+								url,
+								function(response, status, xhr) {
+									if (status == "error") {
+										// default info
+										$(this).prepend(
+												"<!-- WARNING controller-view '"
+														+ url
+														+ "' not found -->");
+										console.debug("controller-view '" + url
+												+ "' not found!");
+										that.push();
+									} else {
+										// update view
+										that.push();
+									}
+								});
+					});
+		}
 	}
 }
 
@@ -337,11 +339,7 @@ $(document).ready(function() {
 
 	// first load views for all registered controllers and push the model....
 	$.each(Ben._controllers, function(index, contrl) {
-		if (contrl.view)
-			contrl.load();
-		else
-			// no view defined!
-			contrl.push();
+		contrl.init();
 	});
 
 	// now load templates...
