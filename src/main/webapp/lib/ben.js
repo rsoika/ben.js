@@ -86,36 +86,50 @@ function BenController(id, model, view, controller) {
 		var selectorId = "[ben-controller='" + this.id + "']";
 
 		// first look for all ben-foreach blocks.....
-		$(selectorId).find('[ben-for-each]').each(
-				function() {
-					// get the model object...
-					var modelField = $(this).attr("ben-for-each");
-					var forEachBlock = $(this);
-					var forEachBlockContent = forEachBlock.clone().html()
-							.trim();
-					// in case that the contentblock did not begin with an html
-					// tag add one....
-					if (!forEachBlockContent.match("^<")) {
-						forEachBlockContent = "<span>" + forEachBlockContent
-								+ "</span>";
-					}
-					// remove the content which was just the template...
-					$(this).empty();
-					if (modelField) {
-						var modelValue = model[modelField];
-						if ($.isArray(modelValue)) {
-							// alert('alles gut');
-							// copy the content of the ben-for-each block
-							$.each(modelValue, function(index, model_element) {
-								var newEntry = $.parseHTML(forEachBlockContent);
-								var entryBlock = $(forEachBlock).append(newEntry);
-								_update_section(newEntry, model_element);
-							});
-						}
+		$(selectorId)
+				.find('[ben-for-each]')
+				.each(
+						function() {
+							// get the model object...
+							var modelField = $(this).attr("ben-for-each");
+							var forEachBlock = $(this);
+							var forEachBlockContent = forEachBlock.clone()
+									.html().trim();
+							// in case that the contentblock did not begin with
+							// an html
+							// tag add one....
+							if (!forEachBlockContent.match("^<")) {
+								forEachBlockContent = "<span>"
+										+ forEachBlockContent + "</span>";
+							}
+							// remove the content which was just the template...
+							$(this).empty();
+							if (modelField) {
+								var modelValue = model[modelField];
+								if ($.isArray(modelValue)) {
+									// alert('alles gut');
+									// copy the content of the ben-for-each
+									// block
+									$
+											.each(
+													modelValue,
+													function(index,
+															model_element) {
+														var newEntry = $
+																.parseHTML(forEachBlockContent);
+														var entryBlock = $(
+																forEachBlock)
+																.append(
+																		newEntry);
+														_update_section(
+																newEntry,
+																model_element);
+													});
+								}
 
-					}
+							}
 
-				});
+						});
 
 		_update_section(selectorId, this.model);
 
@@ -146,18 +160,21 @@ function BenController(id, model, view, controller) {
 				url = this.id + ".html";
 			}
 		}
-		console.debug("load view '" + url + "'...");
+
 		var selectorId = "[ben-controller='" + this.id + "']";
-		$(selectorId).load(url, function(response, status, xhr) {
-			if (status == "error") {
-				// default info
-				// $(selectorId).html("<!-- view not found -->");
-				console.debug("controller-view '" + url + "' not found!");
-				that.push();
-			} else {
-				// update view
-				that.push();
-			}
+		$(selectorId).each(function() {
+			console.debug("load view '" + url + "'...");
+			$(this).load(url, function(response, status, xhr) {
+				if (status == "error") {
+					// default info
+					 $(this).prepend("<!-- WARNING controller-view '" + url + "' not found -->");
+					console.debug("controller-view '" + url + "' not found!");
+					that.push();
+				} else {
+					// update view
+					that.push();
+				}
+			});
 		});
 
 	}
@@ -243,10 +260,10 @@ function _update_section(selectorId, model) {
 					// check if input is a ben-model
 					var modelField = $(this).attr("ben-model");
 					if (modelField) {
-						//var modelValue = model[modelField];
+						// var modelValue = model[modelField];
 						// evaluate the model value...
-						if (!modelField.match("^model.")) {  
-							modelField="model."+modelField;
+						if (!modelField.match("^model.")) {
+							modelField = "model." + modelField;
 						}
 						var modelValue = eval(modelField);
 						if (!modelValue)
@@ -254,7 +271,7 @@ function _update_section(selectorId, model) {
 
 						// test for normal element
 						if (!this.type && $(this).text) {
-								$(this).text(modelValue);
+							$(this).text(modelValue);
 						} else {
 							// test input fields
 							switch (this.type) {
@@ -318,10 +335,7 @@ $(document).ready(function() {
 
 	console.debug("starting application...");
 
-	// load templates...
-	_load_templates();
-
-	// load views for all registered controllers and push the model....
+	// first load views for all registered controllers and push the model....
 	$.each(Ben._controllers, function(index, contrl) {
 		if (contrl.view)
 			contrl.load();
@@ -329,5 +343,8 @@ $(document).ready(function() {
 			// no view defined!
 			contrl.push();
 	});
+
+	// now load templates...
+	_load_templates();
 
 });
