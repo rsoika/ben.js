@@ -7,7 +7,7 @@ var Ben = new Ben();
 function Ben() {
 
 	console.debug('------------------------');
-	console.debug('Ben.js: Version 0.0.1');
+	console.debug('Ben.js: Version 0.0.2');
 	console.debug('------------------------');
 
 	var that = this;
@@ -78,58 +78,81 @@ function BenController(id, model, view, controller) {
 	 * the elements with a 'ben-for-each' attribute and iterates over an
 	 * existing array element.
 	 */
-	this.push = function() {
-		console.debug("push model into view '" + this.id + "': Model=",
-				this.model);
+	this.push = function(context) {
 		var selectorId = "[ben-controller='" + this.id + "']";
 
-		// first look for all ben-foreach blocks.....
-		$(selectorId)
-				.find('[ben-for-each]')
+		$(selectorId, context)
 				.each(
 						function() {
-							// get the model object...
-							var modelField = $(this).attr("ben-for-each");
-							var forEachBlock = $(this);
-							var forEachBlockContent = forEachBlock.clone()
-									.html().trim();
-							// in case that the contentblock did not begin with
-							// an html
-							// tag add one....
-							if (!forEachBlockContent.match("^<")) {
-								forEachBlockContent = "<span>"
-										+ forEachBlockContent + "</span>";
-							}
-							// remove the content which was just the template...
-							$(this).empty();
-							if (modelField) {
-								var modelValue = model[modelField];
-								if ($.isArray(modelValue)) {
-									// alert('alles gut');
-									// copy the content of the ben-for-each
-									// block
-									$
-											.each(
-													modelValue,
-													function(index,
-															model_element) {
-														var newEntry = $
-																.parseHTML(forEachBlockContent);
-														var entryBlock = $(
-																forEachBlock)
-																.append(
-																		newEntry);
-														_update_section(
-																newEntry,
-																model_element);
-													});
-								}
+							console.debug("push model into view '" + that.id
+									+ "': Model=", that.model);
 
-							}
+							_update_section(this, that.model);
+
+							// now look for all ben-for-each blocks.....
+							$(this)
+									.find('[ben-for-each]')
+									.each(
+											function() {
+
+												// get the model object...
+												var modelField = $(this).attr(
+														"ben-for-each");
+												var forEachBlock = $(this);
+												var forEachBlockContent = forEachBlock
+														.clone().html().trim();
+												// in case that the contentblock
+												// did not begin with
+												// an html
+												// tag add one....
+												if (!forEachBlockContent
+														.match("^<")) {
+													forEachBlockContent = "<span>"
+															+ forEachBlockContent
+															+ "</span>";
+												}
+												// remove the content which was
+												// just the template...
+												$(this).empty();
+												if (modelField) {
+													// evaluate the model
+													// value...
+													if (!modelField
+															.match("^model.")) {
+														modelField = "model."
+																+ modelField;
+													}
+													var modelValue = eval(modelField);
+													if (!modelValue)
+														modelValue = "";
+
+													if ($.isArray(modelValue)) {
+														// copy the content of
+														// the ben-for-each
+														// block
+														$
+																.each(
+																		modelValue,
+																		function(
+																				index,
+																				model_element) {
+																			var newEntry = $
+																					.parseHTML(forEachBlockContent);
+																			var entryBlock = $(
+																					forEachBlock)
+																					.append(
+																							newEntry);
+																			_update_section(
+																					newEntry,
+																					model_element);
+																		});
+													}
+
+												}
+
+											});
 
 						});
-
-		_update_section(selectorId, this.model);
 
 	}
 
@@ -160,9 +183,11 @@ function BenController(id, model, view, controller) {
 			$(selectorId).each(
 					function() {
 						console.debug("load view '" + url + "'...");
+						var context = $(this).parent();
 						$(this).load(
 								url,
 								function(response, status, xhr) {
+									
 									if (status == "error") {
 										// default info
 										$(this).prepend(
@@ -171,10 +196,10 @@ function BenController(id, model, view, controller) {
 														+ "' not found -->");
 										console.debug("controller-view '" + url
 												+ "' not found!");
-										that.push();
+										that.push(context);
 									} else {
 										// update view
-										that.push();
+										that.push(context);
 									}
 								});
 					});
@@ -225,6 +250,7 @@ function _load_templates() {
 		if (url) {
 			// load the template...
 			$(this).load(url, function(response, status, xhr) {
+				var context = this;
 				if (status == "error") {
 					// not found!
 					var template_error = "template: '" + url + "' not found";
@@ -232,6 +258,13 @@ function _load_templates() {
 					// $(this).html("<!-- " + template_error + " -->");
 				} else {
 					console.debug("template: '" + url + "' loaded");
+
+					// first load views for all registered controllers and push
+					// the model....
+					$.each(Ben._controllers, function(index, contrl) {
+						contrl.push(context);
+					});
+
 				}
 			});
 		}
@@ -240,8 +273,8 @@ function _load_templates() {
 }
 
 /**
- * This function fills a given selector with a model object. Each element with
- * the attribute 'ben-model' inside the section will be filled with the
+ * This helper method fills a given selector with a model object. Each element
+ * with the attribute 'ben-model' inside the section will be filled with the
  * corresponding model value. If no model value exists the element will be
  * cleared. In case the element is a child of a ben-for-each block the element
  * will be ignored (see the push() method).
@@ -251,48 +284,51 @@ function _load_templates() {
  * @param model -
  *            modelobject
  */
-function _update_section(selectorId, model) {
+function _update_section(selector, model) {
 
-	$(selectorId).find('[ben-model]').each(
+	$(selector).find('[ben-model]').each(
 			function() {
 
-				// test if the element is a child of a ben-for-each block!
-				if (!((typeof selectorId) == "string" && $(this).closest(
-						"[ben-for-each]").length > 0)) {
-					// check if input is a ben-model
-					var modelField = $(this).attr("ben-model");
-					if (modelField) {
-						// var modelValue = model[modelField];
-						// evaluate the model value...
-						if (!modelField.match("^model.")) {
-							modelField = "model." + modelField;
-						}
-						var modelValue = eval(modelField);
-						if (!modelValue)
-							modelValue = "";
-
-						// test for normal element
-						if (!this.type && $(this).text) {
-							$(this).text(modelValue);
-						} else {
-							// test input fields
-							switch (this.type) {
-							case 'text':
-							case 'hidden':
-							case 'password':
-							case 'select-multiple':
-							case 'select-one':
-							case 'textarea':
-								$(this).val(modelValue);
-								break;
-							case 'checkbox':
-							case 'radio':
-								this.checked = false;
-							}
-						}
+				// check if input is a ben-model
+				var modelField = $(this).attr("ben-model");
+				if (modelField) {
+					// var modelValue = model[modelField];
+					// evaluate the model value...
+					if (!modelField.match("^model.")) {
+						modelField = "model." + modelField;
+					}
+					var modelValue = "";
+					try {
+						modelValue = eval(modelField)
+					} catch (err) {
+						console.debug("Error evaluating '" + modelField
+								+ "' = " + err.message);
 					}
 
+					if (!modelValue)
+						modelValue = "";
+
+					// test for normal element
+					if (!this.type && $(this).text) {
+						$(this).text(modelValue);
+					} else {
+						// test input fields
+						switch (this.type) {
+						case 'text':
+						case 'hidden':
+						case 'password':
+						case 'select-multiple':
+						case 'select-one':
+						case 'textarea':
+							$(this).val(modelValue);
+							break;
+						case 'checkbox':
+						case 'radio':
+							this.checked = false;
+						}
+					}
 				}
+
 			});
 
 }

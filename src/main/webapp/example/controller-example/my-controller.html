@@ -1,11 +1,6 @@
 
 <div class="imixs-form-panel">
 
-
-	<h3>
-		City: <span ben-model="city" />
-	</h3>
-
 	<div class="form-section col-6">
 
 		<dl>
@@ -13,14 +8,18 @@
 			<dd>
 				<input type="text" value="test" ben-model="name" />
 			</dd>
-
-			<dt>Kein Model Feld</dt>
+			<dt>City</dt>
 			<dd>
-				<input type="text" value="test" ben-model="someotherfield" />
+				<input type="text" value="test" ben-model="city" />
 			</dd>
-			<dt>Dummy</dt>
+
+			<dt>Dynamic Field</dt>
 			<dd>
-				<input type="text" value="sepp" />
+				<input type="text" value="test" ben-model="country" />
+			</dd>
+			<dt>Unbound Field</dt>
+			<dd>
+				<input type="text" value="" />
 			</dd>
 		</dl>
 
@@ -36,5 +35,5 @@
 
 	</div>
 
-	<div id="form1" />
+	<div id="form1" ></div>
 </div>

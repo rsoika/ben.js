@@ -18,12 +18,8 @@ var IndexRoute=Ben.createRoute('route1',['my-controller']);
 
 //select a new workitem
 Demo.initWorkitem = function(f) {
-	// replace a model property....
-	this.model.name="Hugo";
-	
 	// replace the model...
-	//this.model= new Employee('Hugo', 'Munich', '19.7.2015')
-	
+	this.model= new Employee('Sam', 'Berlin', '20.7.2015')
 	Demo.push();
 }
 
