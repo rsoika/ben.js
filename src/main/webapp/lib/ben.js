@@ -7,7 +7,7 @@ var Ben = new Ben();
 function Ben() {
 
 	console.debug('------------------------');
-	console.debug('Ben.js: Version 0.0.2');
+	console.debug('Ben.js: Version 0.0.3');
 	console.debug('------------------------');
 
 	var that = this;
@@ -42,8 +42,11 @@ function Ben() {
 		var result;
 		// iterate over all controllers
 		$.each(Ben._controllers, function(index, contrl) {
-			if (contrl.id == id)
+			if (contrl.id == id) {
 				result = contrl;
+				// break
+				return false;
+			}
 		});
 
 		if (result)
@@ -64,13 +67,13 @@ function BenController(id, model, view, controller) {
 	/**
 	 * Initializes the controller
 	 */
-	this.init = function() {
-		console.debug("init controller '" + this.id + "'...");
+	this.init = function(context) {
+		console.debug("controller: '" + this.id + "' init...");
 		if (that.view)
-			that.load();
+			that.load(that.view, context);
 		else
 			// no view defined just push the model!
-			that.push();
+			that.push(context);
 	}
 
 	/**
@@ -84,8 +87,8 @@ function BenController(id, model, view, controller) {
 		$(selectorId, context)
 				.each(
 						function() {
-							console.debug("push model into view '" + that.id
-									+ "': Model=", that.model);
+							console.debug("controller: '" + that.id
+									+ "' -> push model=", that.model);
 
 							_update_section(this, that.model);
 
@@ -171,7 +174,7 @@ function BenController(id, model, view, controller) {
 	 * method check the view property. If no view provided the url defaults to
 	 * id+'.html'
 	 */
-	this.load = function(url) {
+	this.load = function(url, searchcontext) {
 		if (!url) {
 			// test view
 			if (that.view) {
@@ -180,14 +183,18 @@ function BenController(id, model, view, controller) {
 		}
 		if (url) {
 			var selectorId = "[ben-controller='" + this.id + "']";
-			$(selectorId).each(
+
+			// document.body
+
+			$(selectorId, searchcontext).each(
 					function() {
-						console.debug("load view '" + url + "'...");
+						console.debug("controller: '" + that.id + "' -> load '"
+								+ url + "'...");
 						var context = $(this).parent();
 						$(this).load(
 								url,
 								function(response, status, xhr) {
-									
+
 									if (status == "error") {
 										// default info
 										$(this).prepend(
@@ -216,7 +223,7 @@ function BenRouter(url, controllers) {
 	 * calls a route.....
 	 */
 	this.route = function() {
-		console.debug("route '" + that.url + "'...");
+		console.debug("route: '" + that.url + "'...");
 
 		// load views for all registered controllers and push the model....
 		$.each(that.controllers, function(index, contrlid) {
@@ -250,19 +257,21 @@ function _load_templates() {
 		if (url) {
 			// load the template...
 			$(this).load(url, function(response, status, xhr) {
-				var context = this;
+				var templateContext = $(this);
 				if (status == "error") {
 					// not found!
 					var template_error = "template: '" + url + "' not found";
 					console.debug(template_error);
-					// $(this).html("<!-- " + template_error + " -->");
+					$(this).prepend(
+							"<!-- WARNING " + template_error+ " -->");
+					
 				} else {
 					console.debug("template: '" + url + "' loaded");
-
-					// first load views for all registered controllers and push
-					// the model....
-					$.each(Ben._controllers, function(index, contrl) {
-						contrl.push(context);
+					// init all conroller in this template....
+					$(templateContext).find('[ben-controller]').each(function() {
+						var cntrl = Ben.findControllerByID($(this).attr("ben-controller"));
+						if (cntrl)
+							cntrl.init(templateContext);
 					});
 
 				}
