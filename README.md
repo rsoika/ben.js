@@ -64,8 +64,7 @@ This example creates a new Controller called 'my-controller' with an instance of
 Ben.JS will put the name of the Employee into the Input Field when the application is loaded. The save button simply calls the pull() method provided by the controller to update the model with the new data.
 
 # Templates
-Ben.JS provides a templating concept which allows you to separate HTML fragments. In the main html page you can define
-a template to be loaded in any location. See the following example index.html:
+Ben.JS provides a templating concept which allows you to separate a page into logical HTML fragments. In the main html page you can define a template to be loaded in any location. See the following example index.html:
 
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -74,27 +73,28 @@ a template to be loaded in any location. See the following example index.html:
     <head><title>Ben.js Demo</title></head>
     <body>
     		<div ben-template="header.html"></div>
-    			<div ben-controller="my-controller">
-    			</div>
+    		<div ben-template="body.html"></div>
+    		<div ben-template="footer.html"></div>
     		<script type="text/javascript" src="../lib/jquery-2.1.4.min.js"></script>
     		<script type="text/javascript" src="..//lib/ben.js"></script>
     		<script type="text/javascript" src="app.js"></script>
      </body>
      </html>
 
-This example will load the 'header.html' at the beginning of the body section.
+This example will load three template in the body section. A Template can contain HTML and anlso controllers which will be initialized by the template. 
 
 ## View Templates
-Ben.JS tries to load a view-template for each controler instance. The naming convention for this template is [Controler-ID].html. So in the example above Ben.JS tries to load the page 'my-controller.html' into the controller section. 
-If the view did not exists Ben.JS will print a warning into the browser console. 
-You can also define a controller with an alternative view during creation:
+Ben.JS is able to load separate HTML template inside a controller. These templates are called "view-template".
+You can initial define a vwie-template when you create a new controller:
 
-    var Demo = Ben.createController("my-controller", new Employee('Anna',
+    var DemoController = Ben.createController("my-controller", new Employee('Anna',
     		'Munich', '19.7.2015'),'my-special-view.html);
 
-Additional you can change the view during runtime by calling the load(url) method from the controller:
+This controller will automatically load the view-template 'my-special-view.html' during the initalizing phase. You can also change the view-template during runtime by calling the load(url) method from the controller:
 
-    Demo.load('another-view.html');
+    DemoController.load('another-view.html');
+
+If the view did not exists Ben.JS will print a warning into the browser console. 
 
 ### for-each templates
 A common requireent is to print the content of a data list form the model into the view. For example if you model provides an array of employees form the example above you can define a view to print each emplyee form the list as a separate entry:
@@ -114,8 +114,7 @@ In this example you can see that the data-binding is not restricted to object va
 
 
 ## Getter Methods
-You can also define getter methods in you model object to compute complex data entries. See the 
-following example:
+Ben.JS allows you  to define getter methods in you model object. Those methods can be used to compute complex data entries. See the following example which provides a getter method to compute the property 'fullname':
 
 
     function Employee(id, firstname, lastname) {
