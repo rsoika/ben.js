@@ -17,9 +17,10 @@ function Company() {
 
 }
 
-var Demo = Ben.createController("my-controller", new Company(),"view.html");
+var DemoController = Ben.createController("my-controller", new Company(),"view.html");
+
+var DemoTemplate = Ben.createTemplate("my-template", "template.html");
+
 
 $(document).ready(function() {
-	// alert('Start Application');
-	// Demo.read();
 });

@@ -7,12 +7,13 @@ var Ben = new Ben();
 function Ben() {
 
 	console.debug('------------------------');
-	console.debug('Ben.js: Version 0.0.3');
+	console.debug('Ben.js: Version 0.0.4');
 	console.debug('------------------------');
 
 	var that = this;
 
 	this._controllers = new Array();
+	this._templates = new Array();
 	this._routes = new Array();
 
 	this.createController = function(id, model, view, appController) {
@@ -32,6 +33,16 @@ function Ben() {
 		that._routes.push(aRoute);
 
 		return aRoute;
+
+	}
+
+	this.createTemplate = function(id, url) {
+		console.debug("register new template: '" + id + "' view='" + url + "'");
+
+		var aTemplate = new BenTemplate(id, url);
+		that._templates.push(aTemplate);
+
+		return aTemplate;
 
 	}
 
@@ -129,9 +140,10 @@ function BenController(id, model, view, controller) {
 													try {
 														modelValue = eval(modelField);
 													} catch (err) {
-														// unable to evaluate array...
+														// unable to evaluate
+														// array...
 													}
-													
+
 													if ($.isArray(modelValue)) {
 														// copy the content of
 														// the ben-for-each
@@ -150,7 +162,8 @@ function BenController(id, model, view, controller) {
 																							newEntry);
 																			_update_section(
 																					newEntry,
-																					model_element, that);
+																					model_element,
+																					that);
 																		});
 													}
 
@@ -217,6 +230,73 @@ function BenController(id, model, view, controller) {
 	}
 }
 
+function BenTemplate(id, url) {
+	var that = this;
+	this.id = id;
+	this.url = url;
+
+	/**
+	 * loads the template content defined by the url property
+	 */
+	this.load = function(searchcontext) {
+		if (!url) {
+			return false;
+		}
+
+		var selectorId = "[ben-template='" + this.id + "']";
+
+		// document.body
+
+		$(selectorId, searchcontext)
+				.each(
+						function() {
+							console.debug("template: '" + that.id
+									+ "' -> load '" + url + "'...");
+							// load the template...
+							$(this)
+									.load(
+											url,
+											function(response, status, xhr) {
+												var templateContext = $(this);
+												if (status == "error") {
+													// not found!
+													var template_error = "template: '"
+															+ url
+															+ "' not found";
+													console
+															.debug(template_error);
+													$(this)
+															.prepend(
+																	"<!-- WARNING "
+																			+ template_error
+																			+ " -->");
+
+												} else {
+													console.debug("template: '"
+															+ url + "' loaded");
+													// init all controllers in
+													// this template....
+													$(templateContext)
+															.find(
+																	'[ben-controller]')
+															.each(
+																	function() {
+																		var cntrl = Ben
+																				.findControllerByID($(
+																						this)
+																						.attr(
+																								"ben-controller"));
+																		if (cntrl)
+																			cntrl
+																					.init(templateContext);
+																	});
+
+												}
+											});
+						});
+	}
+}
+
 function BenRouter(url, controllers) {
 	var that = this;
 	this.controllers = controllers;
@@ -248,63 +328,6 @@ function BenRouter(url, controllers) {
 	}
 }
 
-/**
- * this method searches all 'ben-template' elements and loads its content
- */
-function _load_templates() {
-
-	$('[ben-template]')
-			.each(
-					function() {
-
-						// check if input is a ben-model
-						var url = $(this).attr("ben-template");
-						if (url) {
-							// load the template...
-							$(this)
-									.load(
-											url,
-											function(response, status, xhr) {
-												var templateContext = $(this);
-												if (status == "error") {
-													// not found!
-													var template_error = "template: '"
-															+ url
-															+ "' not found";
-													console
-															.debug(template_error);
-													$(this)
-															.prepend(
-																	"<!-- WARNING "
-																			+ template_error
-																			+ " -->");
-
-												} else {
-													console.debug("template: '"
-															+ url + "' loaded");
-													// init all conroller in
-													// this template....
-													$(templateContext)
-															.find(
-																	'[ben-controller]')
-															.each(
-																	function() {
-																		var cntrl = Ben
-																				.findControllerByID($(
-																						this)
-																						.attr(
-																								"ben-controller"));
-																		if (cntrl)
-																			cntrl
-																					.init(templateContext);
-																	});
-
-												}
-											});
-						}
-					});
-
-}
 
 /**
  * This helper method fills a given selector with a model object. Each element
@@ -318,68 +341,74 @@ function _load_templates() {
  * @param model -
  *            modelobject
  */
-function _update_section(selector, model,controller) {
+function _update_section(selector, model, controller) {
 
-	$(selector).find('[ben-model]').each(
-			function() {
+	$(selector).find('[ben-model]')
+			.each(
+					function() {
 
-				// we ignore elements in a ben-for-each block - see push
-				if ($(this).parent('[ben-for-each]').length) {
-					return false;
-				}
-
-				// check if input is a ben-model
-				var modelField = $(this).attr("ben-model");
-				if (modelField) {
-					var modelValue;
-
-					// check if ben-model is a model method....
-					if (modelField.indexOf("(")>-1) {
-						try {
-							modelValue = eval('controller.model.'+modelField);
-						} catch (err) {
-							console.debug("Error evaluating '" + modelField
-							 	   	+ "' = " + err.message);
+						// we ignore elements in a ben-for-each block - see push
+						if ($(this).parent('[ben-for-each]').length) {
+							return false;
 						}
-					} else {
-						// var modelValue = model[modelField];
-						// evaluate the model value...
-						if (!modelField.match("^model.")) {
-							modelField = "model." + modelField;
-						}
-						try {
-							modelValue = eval(modelField)
-						} catch (err) {
-							console.debug("Error evaluating '" + modelField
-							 	   	+ "' = " + err.message);
-						}
-					} 
 
-					if (!modelValue)
-						modelValue = "";
+						// check if input is a ben-model
+						var modelField = $(this).attr("ben-model");
+						if (modelField) {
+							var modelValue;
 
-					// test for normal element
-					if (!this.type && $(this).text) {
-						$(this).text(modelValue);
-					} else {
-						// test input fields
-						switch (this.type) {
-						case 'text':
-						case 'hidden':
-						case 'password':
-						case 'select-multiple':
-						case 'select-one':
-						case 'textarea':
-							$(this).val(modelValue);
-							break;
-						case 'checkbox':
-						case 'radio':
-							this.checked = false;
+							// check if ben-model is a model method....
+							if (modelField.indexOf("(") > -1) {
+								try {
+									modelValue = eval('controller.model.'
+											+ modelField);
+								} catch (err) {
+									console
+											.debug("Error evaluating '"
+													+ modelField + "' = "
+													+ err.message);
+								}
+							} else {
+								// var modelValue = model[modelField];
+								// evaluate the model value...
+								if (!modelField.match("^model.")) {
+									modelField = "model." + modelField;
+								}
+								try {
+									modelValue = eval(modelField)
+								} catch (err) {
+									console
+											.debug("Error evaluating '"
+													+ modelField + "' = "
+													+ err.message);
+								}
+							}
+
+							if (!modelValue)
+								modelValue = "";
+
+							// test for normal element
+							if (!this.type && $(this).text) {
+								$(this).text(modelValue);
+							} else {
+								// test input fields
+								switch (this.type) {
+								case 'text':
+								case 'hidden':
+								case 'password':
+								case 'select-multiple':
+								case 'select-one':
+								case 'textarea':
+									$(this).val(modelValue);
+									break;
+								case 'checkbox':
+								case 'radio':
+									this.checked = false;
+								}
+							}
 						}
-					}
-				}
 
-			});
+					});
 
 }
 
@@ -429,6 +458,8 @@ $(document).ready(function() {
 	});
 
 	// now load templates...
-	_load_templates();
-
+	// _load_templates();
+	$.each(Ben._templates, function(index, templ) {
+		templ.load();
+	});
 });
