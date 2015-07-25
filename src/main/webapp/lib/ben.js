@@ -125,10 +125,13 @@ function BenController(id, model, view, controller) {
 														modelField = "model."
 																+ modelField;
 													}
-													var modelValue = eval(modelField);
-													if (!modelValue)
-														modelValue = "";
-
+													var modelValue;
+													try {
+														modelValue = eval(modelField);
+													} catch (err) {
+														// unable to evaluate array...
+													}
+													
 													if ($.isArray(modelValue)) {
 														// copy the content of
 														// the ben-for-each
@@ -338,8 +341,7 @@ function _update_section(selector, model,controller) {
 							console.debug("Error evaluating '" + modelField
 							 	   	+ "' = " + err.message);
 						}
-					} 
-					if (!modelValue) {
+					} else {
 						// var modelValue = model[modelField];
 						// evaluate the model value...
 						if (!modelField.match("^model.")) {
