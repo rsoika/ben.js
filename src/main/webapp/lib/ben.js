@@ -77,9 +77,9 @@ function BenController(id, model, view, controller) {
 	}
 
 	/**
-	 * Pushs the controller model into the controller view. The method tests for
-	 * the elements with a 'ben-for-each' attribute and iterates over an
-	 * existing array element.
+	 * Push the controller model into the controller view. The method tests for
+	 * the elements with a 'ben-for-each' attribute and iterates separately over
+	 * an existing array element.
 	 */
 	this.push = function(context) {
 		var selectorId = "[ben-controller='" + this.id + "']";
@@ -250,34 +250,56 @@ function BenRouter(url, controllers) {
  */
 function _load_templates() {
 
-	$('[ben-template]').each(function() {
+	$('[ben-template]')
+			.each(
+					function() {
 
-		// check if input is a ben-model
-		var url = $(this).attr("ben-template");
-		if (url) {
-			// load the template...
-			$(this).load(url, function(response, status, xhr) {
-				var templateContext = $(this);
-				if (status == "error") {
-					// not found!
-					var template_error = "template: '" + url + "' not found";
-					console.debug(template_error);
-					$(this).prepend(
-							"<!-- WARNING " + template_error+ " -->");
-					
-				} else {
-					console.debug("template: '" + url + "' loaded");
-					// init all conroller in this template....
-					$(templateContext).find('[ben-controller]').each(function() {
-						var cntrl = Ben.findControllerByID($(this).attr("ben-controller"));
-						if (cntrl)
-							cntrl.init(templateContext);
+						// check if input is a ben-model
+						var url = $(this).attr("ben-template");
+						if (url) {
+							// load the template...
+							$(this)
+									.load(
+											url,
+											function(response, status, xhr) {
+												var templateContext = $(this);
+												if (status == "error") {
+													// not found!
+													var template_error = "template: '"
+															+ url
+															+ "' not found";
+													console
+															.debug(template_error);
+													$(this)
+															.prepend(
+																	"<!-- WARNING "
+																			+ template_error
+																			+ " -->");
+
+												} else {
+													console.debug("template: '"
+															+ url + "' loaded");
+													// init all conroller in
+													// this template....
+													$(templateContext)
+															.find(
+																	'[ben-controller]')
+															.each(
+																	function() {
+																		var cntrl = Ben
+																				.findControllerByID($(
+																						this)
+																						.attr(
+																								"ben-controller"));
+																		if (cntrl)
+																			cntrl
+																					.init(templateContext);
+																	});
+
+												}
+											});
+						}
 					});
-
-				}
-			});
-		}
-	});
 
 }
 
@@ -297,6 +319,11 @@ function _update_section(selector, model) {
 
 	$(selector).find('[ben-model]').each(
 			function() {
+
+				// we ignore elements in a ben-for-each block - see push
+				if ($(this).parent('[ben-for-each]').length) {
+					return false;
+				}
 
 				// check if input is a ben-model
 				var modelField = $(this).attr("ben-model");
