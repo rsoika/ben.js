@@ -90,7 +90,7 @@ function BenController(id, model, view, controller) {
 							console.debug("controller: '" + that.id
 									+ "' -> push model=", that.model);
 
-							_update_section(this, that.model);
+							_update_section(this, that.model, that);
 
 							// now look for all ben-for-each blocks.....
 							$(this)
@@ -147,7 +147,7 @@ function BenController(id, model, view, controller) {
 																							newEntry);
 																			_update_section(
 																					newEntry,
-																					model_element);
+																					model_element, that);
 																		});
 													}
 
@@ -315,7 +315,7 @@ function _load_templates() {
  * @param model -
  *            modelobject
  */
-function _update_section(selector, model) {
+function _update_section(selector, model,controller) {
 
 	$(selector).find('[ben-model]').each(
 			function() {
@@ -328,18 +328,30 @@ function _update_section(selector, model) {
 				// check if input is a ben-model
 				var modelField = $(this).attr("ben-model");
 				if (modelField) {
-					// var modelValue = model[modelField];
-					// evaluate the model value...
-					if (!modelField.match("^model.")) {
-						modelField = "model." + modelField;
-					}
-					var modelValue = "";
-					try {
-						modelValue = eval(modelField)
-					} catch (err) {
-						console.debug("Error evaluating '" + modelField
-								+ "' = " + err.message);
-					}
+					var modelValue;
+
+					// check if ben-model is a model method....
+					if (modelField.indexOf("(")>-1) {
+						try {
+							modelValue = eval('controller.model.'+modelField);
+						} catch (err) {
+							console.debug("Error evaluating '" + modelField
+							 	   	+ "' = " + err.message);
+						}
+					} 
+					if (!modelValue) {
+						// var modelValue = model[modelField];
+						// evaluate the model value...
+						if (!modelField.match("^model.")) {
+							modelField = "model." + modelField;
+						}
+						try {
+							modelValue = eval(modelField)
+						} catch (err) {
+							console.debug("Error evaluating '" + modelField
+							 	   	+ "' = " + err.message);
+						}
+					} 
 
 					if (!modelValue)
 						modelValue = "";

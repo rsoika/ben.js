@@ -23,14 +23,15 @@ There is no restriction to any JavaScript framework without the need for JQuery.
 
 # The View
 
-The view in Ben.JS is the HTML part of your applicaiton. With custom attributes you can bind your view to a controller:
+The view in Ben.JS is the HTML part of your application. With custom attributes you can bind your view to a controller:
 
     <div ben-controller="myController" />
-       <input type="text" value="" ben-model="myModel" />
+       <input type="text" value="" ben-model="city" />
        ....
     </div>
     
 Ben.JS will automatically push the model into the view or pulls out any changes to your model if you need to store the model on a server.
+
 
 # The Model
 
@@ -42,6 +43,7 @@ The model can be any JavaScript object. There are no restrictions or specific re
        this.city = city;
        this.date = date;
      }
+
 
 
 # The Controller
@@ -108,6 +110,78 @@ A common requireent is to print the content of a data list form the model into t
 In this example you can see that the data-binding is not restricted to object variables. You can also call functions or combine different elements of you model:
 
      Fullname: <span ben-model="model.fristname + ' ' + model.lastname"</span>
+
+
+
+## Getter Methods
+You can also define getter methods in you model object to compute complex data entries. See the 
+following example:
+
+
+    function Employee(id, firstname, lastname) {
+       this.id = id;
+       this.firstname = firstname;
+       this.lastname = lastname;
+	    // getter method
+       this.getFullname = function() {
+		  return firstname + ' ' + lastname;
+	   }
+    }
+
+To access a getter method in your view you simply add the method into the ben-model attribute:
+
+    <div ben-controller="myController" />
+       <h1 ben-model="getFullname()" ></h1>
+       ....
+    </div>
+
+### Access the model object 
+In addition Ben.JS can also pass the current model object to your getter method. 
+For example if you have a list of entries in your model than you 
+can use the ben-for-each attribute to iterate over all entries. If you add the 'model' into 
+your getter method Ben.JS will pas for each iteration the array entry to you getter method. 
+See the following example:
+
+
+    function Company() {
+    	this.employers = new Array();
+	    this.employers.push(new Employee('Anna', 'Munich', '19.7.2015'));
+    	this.employers.push(new Employee('Sam', 'Berlin', '20.7.2015'));
+    	this.employers.push(new Employee('Douglas', 'Hamburg', '21.7.2015'));
+    	
+	    // getter method
+       this.getLocation = function(model) {
+		  return 'Located in ' + model.citiy;
+	   }
+    }
+
+View example with a for-each block: 
+
+    <div ben-for-each="employers" />
+        <h1 ben-model="getLocation(model)" ></h1>
+       ....
+     </div>
+
+In this example Ben.JS will pass the employer of each iteration to your getLocation method.
+
+### Access the controller
+If you want to get access to the controller you can use the directive 'controller' to pas 
+the controller object into your getter method:
+
+      // getter method
+       this.getCount = function(controller) {
+		  ....
+	   }
+	   
+View example: 
+
+    <div ben-for-each="employers" />
+        <h1 ben-model="getCount(controller)" ></h1>
+       ....
+     </div>
+
+
+
 
 # Routes
 
