@@ -79,12 +79,15 @@ function BenController(id, model, view, controller) {
 	 * Initializes the controller
 	 */
 	this.init = function(context) {
-		console.debug("controller: '" + this.id + "' init...");
-		if (that.view)
-			that.load(that.view, context);
-		else
-			// no view defined just push the model!
-			that.push(context);
+		var selectorId = "[ben-controller='" + this.id + "']";
+		if ($(selectorId, context).length) {
+			console.debug("controller: '" + this.id + "' init...");
+			if (that.view)
+				that.load(that.view, context);
+			else
+				// no view defined just push the model!
+				that.push(context);
+		}
 	}
 
 	/**
@@ -327,7 +330,6 @@ function BenRouter(url, controllers) {
 
 	}
 }
-
 
 /**
  * This helper method fills a given selector with a model object. Each element
