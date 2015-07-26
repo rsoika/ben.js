@@ -199,9 +199,41 @@ View example:
 
 
 
-# Routes
+#Routes
 
-tbd. 
+Routes are used to navigate inside the application.  aBen.JS provides a router concept which allows to define different states on an application. To define a new route the method createRoute() is called. The method returns an instance of a route. See the following example:
+
+    Route1 = Ben.createRoute('route1', {"template1" : "my-template.html" });
+
+The method expects an ID and a route description containing an array of templates. When a route is called Ben.JS automatically refreshes all defined templates.
+
+    <input type="button" value="route back" onclick="Route1.route();" />
+
+
+#Callbacks
+Ben.JS supports the jQuery callback functions (http://api.jquery.com/jQuery.Callbacks/) to allow an application to hook into different events triggered by Templates or Routes. The following callbacks are defined:
+
+ * Template.beforeLoad
+ * Template.afterLoad
+ * Router.beforeLoad
+ * Router.afterLoad
+
+The following example shows how to register a callback function for a route
+
+     Route1.afterRoute.add(function(f) {
+	    console.log("App: route finished");
+     });
+
+A typical usecase for a callback method is the Template.afterLoad callback which can be used to start a ajax request to load data after the template was loaded into the page.
+
+    Route1.afterRoute.add( function (router) {
+	  $.getJSON(
+			"/backlog/rest-service/",function(data) {
+				myController.model = data;
+				myController.push();
+			});
+    });
+
 
 # Naming conventions    
 There are no special naming conventions in Ben.JS. You are free to build your application in your own style.
