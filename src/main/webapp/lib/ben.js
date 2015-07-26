@@ -66,6 +66,27 @@ function Ben() {
 			console.log("ERROR: Controler '" + id + "' not registered");
 	}
 
+	
+	/**
+	 * returns a registered template by its id.
+	 */
+	this.findTemplateByID = function(id) {
+		var result;
+		// iterate over all controllers
+		$.each(Ben._templates, function(index, templ) {
+			if (templ.id == id) {
+				result = templ;
+				// break
+				return false;
+			}
+		});
+
+		if (result)
+			return result;
+		else
+			console.log("ERROR: Template'" + id + "' not registered");
+	}
+
 }
 
 function BenController(id, model, view, controller) {
@@ -237,16 +258,18 @@ function BenTemplate(id, url) {
 	var that = this;
 	this.id = id;
 	this.url = url;
+	this.beforeLoad = $.Callbacks();
+	this.afterLoad = $.Callbacks();
 
 	/**
 	 * loads the template content defined by the url property
 	 */
 	this.load = function(searchcontext) {
-		if (!url) {
+		if (!that.url) {
 			return false;
 		}
 
-		var selectorId = "[ben-template='" + this.id + "']";
+		var selectorId = "[ben-template='" + that.id + "']";
 
 		// document.body
 
@@ -254,17 +277,19 @@ function BenTemplate(id, url) {
 				.each(
 						function() {
 							console.debug("template: '" + that.id
-									+ "' -> load '" + url + "'...");
+									+ "' -> load '" + that.url + "'...");
+							// callback
+							that.beforeLoad.fire(that);
 							// load the template...
 							$(this)
 									.load(
-											url,
+											that.url,
 											function(response, status, xhr) {
 												var templateContext = $(this);
 												if (status == "error") {
 													// not found!
 													var template_error = "template: '"
-															+ url
+															+ that.url
 															+ "' not found";
 													console
 															.debug(template_error);
@@ -276,7 +301,7 @@ function BenTemplate(id, url) {
 
 												} else {
 													console.debug("template: '"
-															+ url + "' loaded");
+															+ that.url + "' loaded");
 													// init all controllers in
 													// this template....
 													$(templateContext)
@@ -295,39 +320,68 @@ function BenTemplate(id, url) {
 																	});
 
 												}
+												
+												// callback
+												that.afterLoad.fire(that);
+												
 											});
 						});
 	}
 }
 
-function BenRouter(url, controllers) {
+function BenRouter(id, config) {
 	var that = this;
-	this.controllers = controllers;
-	this.url = url;
+	this.id = id;
+	this.config=config;
+	this.beforeRoute = $.Callbacks();
+	this.afterRoute = $.Callbacks();
+	this.templateCount=0;
 
 	/**
 	 * calls a route.....
 	 */
 	this.route = function() {
-		console.debug("route: '" + that.url + "'...");
-
-		// load views for all registered controllers and push the model....
-		$.each(that.controllers, function(index, contrlid) {
-
-			contrl = Ben.findControllerByID(contrlid);
-			if (contrl) {
-				contrl.init();
-				if (contrl.view)
-					contrl.load();
-				else
-					// no view defined!
-					contrl.push();
+		console.debug("route: '" + that.id + "'...");		
+		that.beforeRoute.fire(that);
+		
+		
+		// load templates
+		var keys = Object.keys(that.config);
+		
+		$.each(keys, function(index, templID) {
+			var templ= Ben.findTemplateByID(templID);
+			if (templ) {
+				templ.url=that.config[templID];
+				templ.afterLoad.add(that._templateOnLoad);
+				that.templateCount++;
+				templ.load();
 			}
 		});
-
-		// update route...browser url
-		document.location.href = "#" + that.url;
-
+		
+		
+		
+		
+	}
+	
+	
+	/*
+	 * Callback method to monitor template loading
+	 */
+	this._templateOnLoad = function(templ) {
+		console.debug('Router: template meldet load finished');
+		
+		// unregister callback...
+		templ.afterLoad.remove(that._templateOnLoad);
+		that.templateCount--;
+		
+		if (that.templateCount==0) {
+			// update route...browser url
+			document.location.href = "#" + that.id;
+			
+			console.debug('Router: complete');
+			// callback
+			that.afterRoute.fire(that);
+		}
 	}
 }
 
@@ -453,7 +507,11 @@ function _read_section(selectorId, model) {
 $(document).ready(function() {
 
 	console.debug("starting application...");
-
+//	 jQuery.ajaxSetup({
+//         // Disable caching of AJAX responses 
+//         cache: false
+//     });
+	 
 	// first load views for all registered controllers and push the model....
 	$.each(Ben._controllers, function(index, contrl) {
 		contrl.init();

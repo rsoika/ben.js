@@ -7,53 +7,32 @@ function Employee(name, city, date) {
 	this.date = date;
 }
 
-var Demo = Ben.createController("my-controller", new Employee('Anna',
-		'Munich', '19.7.2015'),"my-controller.html");
+var DemoController = Ben.createController("my-controller", new Employee('Anna', 'Munich',
+		'19.7.2015'));
 
-
+// register template
+var Template1 = Ben.createTemplate("template1", "my-template.html");
+Template1.beforeLoad.add(function(f) {
+	console.log("App: template loading started");
+});
+Template1.afterLoad.add(function(f) {
+	console.log("App: template loading finished");
+});
 // register a new Route
-var IndexRoute=Ben.createRoute('route1',['my-controller']);
+var Route1 = Ben.createRoute('route1', {
+	"template1" : "my-template.html"
+});
+Route1.afterRoute.add(function(f) {
+	console.log("App: router finished");
+});
 
-
-
-//select a new workitem
-Demo.initWorkitem = function(f) {
+// select a new workitem
+DemoController.initWorkitem = function(f) {
 	// replace the model...
-	this.model= new Employee('Sam', 'Berlin', '20.7.2015')
-	Demo.push();
+	this.model = new Employee('Sam', 'Berlin', '20.7.2015')
+	this.push();
 }
 
-
-
-
-
-// load a form
-Demo.loadForm1 = function(f) {
-	var url="form1.html";
-	$("#form1").load(
-			url,
-			function(response, status, xhr) {
-				if (status == "error") {
-					// default info
-					$("#fomr1").html(
-							"<p>Form not found</p>");
-				} else {
-					// update view
-					document.location.href="#x";
-					Demo.push();
-				}
-			});
+$(document).ready(function() {
 	
-	
-}
-
-
-
-
-
-$(document)
-.ready(
-		function() {
-		// alert('Start Application');
-			//Demo.read();
-		});
+});

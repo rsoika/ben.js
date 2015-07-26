@@ -1,0 +1,40 @@
+
+<div class="imixs-form-panel">
+
+	<div class="form-section col-6">
+		<div ben-controller="my-controller">
+			<dl>
+				<dt>Name</dt>
+				<dd>
+					<input type="text" value="test" ben-model="name" />
+				</dd>
+				<dt>City</dt>
+				<dd>
+					<input type="text" value="test" ben-model="city" />
+				</dd>
+
+				<dt>Dynamic Field</dt>
+				<dd>
+					<input type="text" value="test" ben-model="country" />
+				</dd>
+				<dt>Unbound Field</dt>
+				<dd>
+					<input type="text" value="" />
+				</dd>
+			</dl>
+
+			<input type="button" value="get model" onclick="DemoController.pull()"
+				class="btn" /> <input type="button" value="init model"
+				onclick="DemoController.initWorkitem()" class="btn" /> <input type="button"
+				value="load read-only-mode"
+				onclick="DemoController.load('my-controller-readonly.html')" class="btn" />
+
+		</div>
+
+
+
+	</div>
+
+	<div id="form1"></div>
+</div>
+
