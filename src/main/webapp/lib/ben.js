@@ -279,7 +279,7 @@ function BenTemplate(id, url) {
 							console.debug("template: '" + that.id
 									+ "' -> load '" + that.url + "'...");
 							// callback
-							that.beforeLoad.fire(that);
+							that.beforeLoad.fire(that,$(this));
 							// load the template...
 							$(this)
 									.load(
@@ -322,7 +322,7 @@ function BenTemplate(id, url) {
 												}
 												
 												// callback
-												that.afterLoad.fire(that);
+												that.afterLoad.fire(that,$(templateContext));
 												
 											});
 						});
