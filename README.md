@@ -246,3 +246,6 @@ Ben.JS prints the result of the different method calls into the browsers log. So
 
 # Join this Project
 If you have any questions post them on http://www.http://stackoverflow.com/ and tag your question with 'Ben.JS'. If you have found a problem or got anew ideas just open a new issue in the issue tracker. https://github.com/rsoika/ben.js/issues
+
+## License
+Ben.JS is free software, because we believe that an open exchange of experiences is fundamental for the development of usefull software. The results of this project are provided under the GNU General Public License.

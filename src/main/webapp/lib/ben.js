@@ -1,6 +1,28 @@
-/**
- * Ben.js Copyright (C) 20015, Ralph Soika, https://github.com/rsoika/ben.js
- */
+/*******************************************************************************
+ *  Ben.JS 
+ *  Copyright (C) 2015, Ralph Soika  
+ *  https://github.com/rsoika/ben.js
+ *  
+ *  This program is free software; you can redistribute it and/or 
+ *  modify it under the terms of the GNU General Public License 
+ *  as published by the Free Software Foundation; either version 2 
+ *  of the License, or (at your option) any later version.
+ *  
+ *  This program is distributed in the hope that it will be useful, 
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ *  General Public License for more details.
+ *  
+ *  You can receive a copy of the GNU General Public
+ *  License at http://www.gnu.org/licenses/gpl.html
+ *  
+ *  Project: 
+ *  	https://github.com/rsoika/ben.js
+ *  
+ *  Contributors:  
+ *  	Ralph Soika - Software Developer
+ *******************************************************************************/
+
 
 var Ben = new Ben();
 
