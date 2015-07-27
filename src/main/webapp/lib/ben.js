@@ -1,35 +1,30 @@
 /*******************************************************************************
- *  Ben.JS 
- *  Copyright (C) 2015, Ralph Soika  
- *  https://github.com/rsoika/ben.js
- *  
- *  This program is free software; you can redistribute it and/or 
- *  modify it under the terms of the GNU General Public License 
- *  as published by the Free Software Foundation; either version 2 
- *  of the License, or (at your option) any later version.
- *  
- *  This program is distributed in the hope that it will be useful, 
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of 
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
- *  General Public License for more details.
- *  
- *  You can receive a copy of the GNU General Public
- *  License at http://www.gnu.org/licenses/gpl.html
- *  
- *  Project: 
- *  	https://github.com/rsoika/ben.js
- *  
- *  Contributors:  
- *  	Ralph Soika - Software Developer
- *******************************************************************************/
-
+ * Ben.JS Copyright (C) 2015, Ralph Soika https://github.com/rsoika/ben.js
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You can receive a copy of the GNU General Public License at
+ * http://www.gnu.org/licenses/gpl.html
+ * 
+ * Project: https://github.com/rsoika/ben.js
+ * 
+ * Contributors: Ralph Soika - Software Developer
+ ******************************************************************************/
 
 var Ben = new Ben();
 
 function Ben() {
 
 	console.debug('------------------------');
-	console.debug('Ben.js: Version 0.0.4');
+	console.debug('Ben.js: Version 0.0.5');
 	console.debug('------------------------');
 
 	var that = this;
@@ -88,7 +83,6 @@ function Ben() {
 			console.log("ERROR: Controler '" + id + "' not registered");
 	}
 
-	
 	/**
 	 * returns a registered template by its id.
 	 */
@@ -301,7 +295,7 @@ function BenTemplate(id, url) {
 							console.debug("template: '" + that.id
 									+ "' -> load '" + that.url + "'...");
 							// callback
-							that.beforeLoad.fire(that,$(this));
+							that.beforeLoad.fire(that, $(this));
 							// load the template...
 							$(this)
 									.load(
@@ -323,7 +317,8 @@ function BenTemplate(id, url) {
 
 												} else {
 													console.debug("template: '"
-															+ that.url + "' loaded");
+															+ that.url
+															+ "' loaded");
 													// init all controllers in
 													// this template....
 													$(templateContext)
@@ -342,10 +337,11 @@ function BenTemplate(id, url) {
 																	});
 
 												}
-												
+
 												// callback
-												that.afterLoad.fire(that,$(templateContext));
-												
+												that.afterLoad.fire(that,
+														$(templateContext));
+
 											});
 						});
 	}
@@ -354,52 +350,47 @@ function BenTemplate(id, url) {
 function BenRouter(id, config) {
 	var that = this;
 	this.id = id;
-	this.config=config;
+	this.config = config;
 	this.beforeRoute = $.Callbacks();
 	this.afterRoute = $.Callbacks();
-	this.templateCount=0;
+	this.templateCount = 0;
 
 	/**
 	 * calls a route.....
 	 */
 	this.route = function() {
-		console.debug("route: '" + that.id + "'...");		
+		console.debug("route: '" + that.id + "'...");
 		that.beforeRoute.fire(that);
-		
-		
+
 		// load templates
 		var keys = Object.keys(that.config);
-		
+
 		$.each(keys, function(index, templID) {
-			var templ= Ben.findTemplateByID(templID);
+			var templ = Ben.findTemplateByID(templID);
 			if (templ) {
-				templ.url=that.config[templID];
+				templ.url = that.config[templID];
 				templ.afterLoad.add(that._templateOnLoad);
 				that.templateCount++;
 				templ.load();
 			}
 		});
-		
-		
-		
-		
+
 	}
-	
-	
+
 	/*
 	 * Callback method to monitor template loading
 	 */
 	this._templateOnLoad = function(templ) {
 		console.debug('Router: template meldet load finished');
-		
+
 		// unregister callback...
 		templ.afterLoad.remove(that._templateOnLoad);
 		that.templateCount--;
-		
-		if (that.templateCount==0) {
+
+		if (that.templateCount == 0) {
 			// update route...browser url
 			document.location.href = "#" + that.id;
-			
+
 			console.debug('Router: complete');
 			// callback
 			that.afterRoute.fire(that);
@@ -421,72 +412,66 @@ function BenRouter(id, config) {
  */
 function _update_section(selector, model, controller) {
 
-	$(selector).find('[ben-model]')
-			.each(
-					function() {
+	$(selector).find('[ben-model]').each(
+			function() {
 
-						// we ignore elements in a ben-for-each block - see push
-						if ($(this).parent('[ben-for-each]').length) {
-							return false;
-						}
+				// we ignore elements in a ben-for-each block - see push
+				if ($(this).parent('[ben-for-each]').length) {
+					// skip for-each!
+				} else {
+					// check if input is a ben-model
+					var modelField = $(this).attr("ben-model");
+					if (modelField) {
+						var modelValue;
 
-						// check if input is a ben-model
-						var modelField = $(this).attr("ben-model");
-						if (modelField) {
-							var modelValue;
-
-							// check if ben-model is a model method....
-							if (modelField.indexOf("(") > -1) {
-								try {
-									modelValue = eval('controller.model.'
-											+ modelField);
-								} catch (err) {
-									console
-											.debug("Error evaluating '"
-													+ modelField + "' = "
-													+ err.message);
-								}
-							} else {
-								// var modelValue = model[modelField];
-								// evaluate the model value...
-								if (!modelField.match("^model.")) {
-									modelField = "model." + modelField;
-								}
-								try {
-									modelValue = eval(modelField)
-								} catch (err) {
-									console
-											.debug("Error evaluating '"
-													+ modelField + "' = "
-													+ err.message);
-								}
+						// check if ben-model is a model method....
+						if (modelField.indexOf("(") > -1) {
+							try {
+								modelValue = eval('controller.model.'
+										+ modelField);
+							} catch (err) {
+								console.debug("Error evaluating '" + modelField
+										+ "' = " + err.message);
 							}
-
-							if (!modelValue)
-								modelValue = "";
-
-							// test for normal element
-							if (!this.type && $(this).text) {
-								$(this).text(modelValue);
-							} else {
-								// test input fields
-								switch (this.type) {
-								case 'text':
-								case 'hidden':
-								case 'password':
-								case 'select-multiple':
-								case 'select-one':
-								case 'textarea':
-									$(this).val(modelValue);
-									break;
-								case 'checkbox':
-								case 'radio':
-									this.checked = false;
-								}
+						} else {
+							// var modelValue = model[modelField];
+							// evaluate the model value...
+							if (!modelField.match("^model.")) {
+								modelField = "model." + modelField;
+							}
+							try {
+								modelValue = eval(modelField)
+							} catch (err) {
+								console.debug("Error evaluating '" + modelField
+										+ "' = " + err.message);
 							}
 						}
 
-					});
+						if (!modelValue)
+							modelValue = "";
+
+						// test for normal element
+						if (!this.type && $(this).text) {
+							$(this).text(modelValue);
+						} else {
+							// test input fields
+							switch (this.type) {
+							case 'text':
+							case 'hidden':
+							case 'password':
+							case 'select-multiple':
+							case 'select-one':
+							case 'textarea':
+								$(this).val(modelValue);
+								break;
+							case 'checkbox':
+							case 'radio':
+								this.checked = false;
+							}
+						}
+					}
+				}
+			});
 
 }
 
@@ -529,11 +514,11 @@ function _read_section(selectorId, model) {
 $(document).ready(function() {
 
 	console.debug("starting application...");
-//	 jQuery.ajaxSetup({
-//         // Disable caching of AJAX responses 
-//         cache: false
-//     });
-	 
+	// jQuery.ajaxSetup({
+	// // Disable caching of AJAX responses
+	// cache: false
+	// });
+
 	// first load views for all registered controllers and push the model....
 	$.each(Ben._controllers, function(index, contrl) {
 		contrl.init();

@@ -5,7 +5,7 @@
 	<artifactId>ben-js</artifactId>
 	<packaging>war</packaging>
 	<name>Benjs</name>
-	<version>0.0.4</version>
+	<version>0.0.5</version>
 
 	<description>Single Page Application Framework </description>
 
