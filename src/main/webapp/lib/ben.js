@@ -80,7 +80,7 @@ function Ben() {
 		if (result)
 			return result;
 		else
-			console.log("ERROR: Controler '" + id + "' not registered");
+			console.error("ERROR: Controler '" + id + "' not registered");
 	}
 
 	/**
@@ -100,7 +100,7 @@ function Ben() {
 		if (result)
 			return result;
 		else
-			console.log("ERROR: Template'" + id + "' not registered");
+			console.error("ERROR: Template'" + id + "' not registered");
 	}
 
 }
@@ -317,7 +317,7 @@ function BenTemplate(id, url) {
 
 												} else {
 													console.debug("template: '"
-															+ that.url
+															+ that.id
 															+ "' loaded");
 													// init all controllers in
 													// this template....
@@ -381,8 +381,6 @@ function BenRouter(id, config) {
 	 * Callback method to monitor template loading
 	 */
 	this._templateOnLoad = function(templ) {
-		console.debug('Router: template meldet load finished');
-
 		// unregister callback...
 		templ.afterLoad.remove(that._templateOnLoad);
 		that.templateCount--;
@@ -391,7 +389,7 @@ function BenRouter(id, config) {
 			// update route...browser url
 			document.location.href = "#" + that.id;
 
-			console.debug('Router: complete');
+			console.debug("route: '" + that.id + "' complete");
 			// callback
 			that.afterRoute.fire(that);
 		}
@@ -430,7 +428,7 @@ function _update_section(selector, model, controller) {
 								modelValue = eval('controller.model.'
 										+ modelField);
 							} catch (err) {
-								console.debug("Error evaluating '" + modelField
+								console.error("Error evaluating '" + modelField
 										+ "' = " + err.message);
 							}
 						} else {
@@ -442,7 +440,7 @@ function _update_section(selector, model, controller) {
 							try {
 								modelValue = eval(modelField)
 							} catch (err) {
-								console.debug("Error evaluating '" + modelField
+								console.error("Error evaluating '" + modelField
 										+ "' = " + err.message);
 							}
 						}

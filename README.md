@@ -34,7 +34,7 @@ A model in Ben.JS can be any JavaScript object. There are no restrictions or spe
 
 ## The Controller
 
-A controller is used to bind a model to a view. Ben.JS provides the method 'crateController()' to create a new instance of a controller. The method expects an ID and a Model Object and binds the model automatically to the view. See the following example creates a new controller with the ID 'my-controller' and binds a new model object of the Employee object declared before:
+A controller is used to bind a model to a view. Ben.JS provides the method 'crateController()' to create a new instance of a controller. The method expects an ID and a Model Object and binds the model automatically to the view. The following example creates a new controller with the ID 'my-controller' and binds a new model object of the Employee object declared before:
 
     var Demo = Ben.createController("my-controller", new Employee('Anna',
     		'Munich', '19.7.2015'));
@@ -42,7 +42,7 @@ A controller is used to bind a model to a view. Ben.JS provides the method 'crat
 
 ## The View
 
-The view in Ben.JS is simply any HTML part inside the application. A view is bound to a controller which encapsulates the view. With the custom attribute 'ben-model' a model object provided by the controller can be bound to any HTML element inside the view. The following example shows how the controller created before can be placed in a view:
+The view in Ben.JS can simply be any HTML part inside the application. A view is bound to a controller which encapsulates the view. With the custom attribute 'ben-model' a model object provided by the controller can be pushed into any HTML element inside the view. The following example shows how the controller created before can be placed in a view:
 
     <div ben-controller="myController" />
        <input type="text" value="" ben-model="city" />
@@ -51,21 +51,21 @@ The view in Ben.JS is simply any HTML part inside the application. A view is bou
     
 Ben.JS will put the name of the Employee into the Input Field when the application is loaded.
 
-The data-binding of Ben.JS is not restricted to object variables. It is also possible to call functions of a model object or combine different elements of a model. In this case the model property need to be prefixed with the 'model.' directive to valid expression:
+The data-binding of Ben.JS is not restricted to object variables. It is also possible to call functions of a model object or combine different elements of a model. In this case the model property need to be prefixed with the 'model.' directive to a valid expression. See the following example:
 
      Fullname: <span ben-model="model.fristname + ' ' + model.lastname"</span>
 
 
 ### Pull and Push the model
-Ben.JS will automatically push the model provided by the controller into the view when the controller was loaded. To pull any changes of the model back into the controller the method 'pull()' can be called. 
-The following HTML fragment how to define an action button to update the model of a controller instance:
+Ben.JS will automatically push the model provided by the controller into the view when the controller was loaded. To pull any changes out of the view back into the controller model, the method 'pull()' can be called. 
+The following HTML fragment shows how to define an action button to update the model of a controller instance:
 
     <div ben-controller="my-controller">
        Name: <input type="text" value="" ben-model="name" />
     </div>	
     <input type="button" value="save" onclick="Demo.pull()"  />
 
-The save button simply calls the pull() method provided by the controller to update the model with the new data entered by the user. Note: It is not necessary that this action is placed inside the controller view. The pull() method of a controller can be called in any situation. 
+The save button in this example simply calls the pull() method provided by the controller to update the model with the new data entered by the user. Note: It is not necessary that this action is placed inside the controller view. The pull() method of a controller can be called in any situation. 
 
 
 
@@ -75,7 +75,7 @@ Ben.JS provides a templating concept which allows to separate a page into logica
     var DemoTemplate = Ben.createTemplate("my-template","some.html");
 
 A template is defined by an ID and an optional HTML page which will be loaded automatically during startup.
-In the main HTML page a template can be placed in any location using the tag 'ben-template'. The following example shows how to define templates in a index.html:
+In the main HTML page a template can be placed at any location using the tag 'ben-template'. The following example shows how to define templates in a index.html:
 
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -92,7 +92,7 @@ In the main HTML page a template can be placed in any location using the tag 'be
      </body>
      </html>
 
-This example will load three template in the body section. A Template can contain HTML and also controllers which will be initialized automatically by the template. If no default HTML view is defined, the template body can be used to define a default view of a template:
+This example defines three templates in the body section. The HTML fragment of a template will be loaded during startup. A Template can contain controllers which will be initialized automatically by the template. If no default HTML view is defined, the template body can be used to define a default view of a template:
 
     		<div ben-template="header-template">
     			<h1>Some default content....</h1>
