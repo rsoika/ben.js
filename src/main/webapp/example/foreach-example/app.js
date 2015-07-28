@@ -16,4 +16,5 @@ function Company() {
 var Demo = Ben.createController("my-controller", new Company());
 
 $(document).ready(function() {
+	Ben.start();
 });

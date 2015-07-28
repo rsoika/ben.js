@@ -34,5 +34,5 @@ DemoController.initWorkitem = function(f) {
 }
 
 $(document).ready(function() {
-	
+	Ben.start();
 });

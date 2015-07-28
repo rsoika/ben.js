@@ -42,10 +42,10 @@ A controller is used to bind a model to a view. Ben.JS provides the method 'crat
 
 ## The View
 
-The view in Ben.JS can simply be any HTML part inside the application. A view is bound to a controller which encapsulates the view. With the custom attribute 'ben-model' a model object provided by the controller can be pushed into any HTML element inside the view. The following example shows how the controller created before can be placed in a view:
+The view in Ben.JS can simply be any HTML part inside the application. A view is bound to a controller which encapsulates the view. With the custom attribute 'data-ben-model' a model object provided by the controller can be pushed into any HTML element inside the view. The following example shows how the controller created before can be placed in a view:
 
-    <div ben-controller="myController" />
-       <input type="text" value="" ben-model="city" />
+    <div data-ben-controller="myController" />
+       <input type="text" value="" data-ben-model="city" />
        ....
     </div>
     
@@ -53,15 +53,15 @@ Ben.JS will put the name of the Employee into the Input Field when the applicati
 
 The data-binding of Ben.JS is not restricted to object variables. It is also possible to call functions of a model object or combine different elements of a model. In this case the model property need to be prefixed with the 'model.' directive to a valid expression. See the following example:
 
-     Fullname: <span ben-model="model.fristname + ' ' + model.lastname"</span>
+     Fullname: <span data-ben-model="model.fristname + ' ' + model.lastname"</span>
 
 
 ### Pull and Push the model
 Ben.JS will automatically push the model provided by the controller into the view when the controller was loaded. To pull any changes out of the view back into the controller model, the method 'pull()' can be called. 
 The following HTML fragment shows how to define an action button to update the model of a controller instance:
 
-    <div ben-controller="my-controller">
-       Name: <input type="text" value="" ben-model="name" />
+    <div data-ben-controller="my-controller">
+       Name: <input type="text" value="" data-ben-model="name" />
     </div>	
     <input type="button" value="save" onclick="Demo.pull()"  />
 
@@ -75,7 +75,7 @@ Ben.JS provides a templating concept which allows to separate a page into logica
     var DemoTemplate = Ben.createTemplate("my-template","some.html");
 
 A template is defined by an ID and an optional HTML page which will be loaded automatically during startup.
-In the main HTML page a template can be placed at any location using the tag 'ben-template'. The following example shows how to define templates in a index.html:
+In the main HTML page a template can be placed at any location using the tag 'data-ben-template'. The following example shows how to define templates in a index.html:
 
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -83,9 +83,9 @@ In the main HTML page a template can be placed at any location using the tag 'be
     <html xmlns="http://www.w3.org/1999/xhtml">
     <head><title>Ben.js Demo</title></head>
     <body>
-    		<div ben-template="header-template"></div>
-    		<div ben-template="body-template"></div>
-    		<div ben-template="footer-template"></div>
+    		<div data-ben-template="header-template"></div>
+    		<div data-ben-template="body-template"></div>
+    		<div data-ben-template="footer-template"></div>
     		<script type="text/javascript" src="../lib/jquery-2.1.4.min.js"></script>
     		<script type="text/javascript" src="..//lib/ben.js"></script>
     		<script type="text/javascript" src="app.js"></script>
@@ -94,7 +94,7 @@ In the main HTML page a template can be placed at any location using the tag 'be
 
 This example defines three templates in the body section. The HTML fragment of a template will be loaded during startup. A Template can contain controllers which will be initialized automatically by the template. If no default HTML view is defined, the template body can be used to define a default view of a template:
 
-    		<div ben-template="header-template">
+    		<div data-ben-template="header-template">
     			<h1>Some default content....</h1>
     		</div>
 
@@ -119,13 +119,13 @@ In this example the controller will automatically load the view-template 'my-spe
 If the HTML view did not exists Ben.JS will print a warning into the browser console. 
 
 ## for-each templates
-A common requirement is to print the content of a data list form the model into the view. For example if the model contains an array of employees form the example above a view can be defined to print each employee object as an separate entry. The tag 'ben-for-each' is used to define a for-each template:
+A common requirement is to print the content of a data list form the model into the view. For example if the model contains an array of employees form the example above a view can be defined to print each employee object as an separate entry. The tag 'data-ben-foreach' is used to define a for-each template:
 
-    <h3>For-Each Block: count=<span ben-model="model.employers.length"</span></h3>
-        <div ben-for-each="employers">
-            Name=<span ben-model="name"></span> 
+    <h3>For-Each Block: count=<span data-ben-model="model.employers.length"</span></h3>
+        <div data-ben-foreach="employers">
+            Name=<span data-ben-model="name"></span> 
             <br /> 
-            City=<span ben-model="city"></span>
+            City=<span data-ben-model="city"></span>
             <hr />
         </div
 
@@ -145,17 +145,17 @@ Ben.JS supports the concept of getter methods in a model object. Those methods c
 	   }
     }
 
-To access a getter method in a view the method can be placed into the ben-model attribute:
+To access a getter method in a view the method can be placed into the data-ben-model attribute:
 
-    <div ben-controller="myController" />
-       <h1 ben-model="getFullname()" ></h1>
+    <div data-ben-controller="myController" />
+       <h1 data-ben-model="getFullname()" ></h1>
        ....
     </div>
 
 ## Access the model object 
 In addition Ben.JS can also pass the current model object to your getter method. 
 For example if you have a list of entries in your model than you 
-can use the ben-for-each attribute to iterate over all entries. If you add the 'model' into 
+can use the data-ben-foreach attribute to iterate over all entries. If you add the 'model' into 
 your getter method Ben.JS will pas for each iteration the array entry to you getter method. 
 See the following example:
 
@@ -174,8 +174,8 @@ See the following example:
 
 View example with a for-each block: 
 
-    <div ben-for-each="employers" />
-        <h1 ben-model="getLocation(model)" ></h1>
+    <div data-ben-foreach="employers" />
+        <h1 data-ben-model="getLocation(model)" ></h1>
        ....
      </div>
 
@@ -191,8 +191,8 @@ To get access to the controller the directive 'controller' can be used to pas th
 	   
 View example: 
 
-    <div ben-for-each="employers" />
-        <h1 ben-model="getCount(controller)" ></h1>
+    <div data-ben-foreach="employers" />
+        <h1 data-ben-model="getCount(controller)" ></h1>
        ....
      </div>
 

@@ -23,4 +23,5 @@ var DemoTemplate = Ben.createTemplate("my-template", "template.html");
 
 
 $(document).ready(function() {
+	Ben.start();
 });

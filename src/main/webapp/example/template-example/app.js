@@ -22,6 +22,5 @@ var DemoController = Ben.createController("my-controller", new Company());
 var DemoTemplate = Ben.createTemplate("my-template", "view.html");
 
 $(document).ready(function() {
-	// alert('Start Application');
-	// Demo.read();
+	Ben.start();
 });

@@ -28,7 +28,6 @@ function Ben() {
 	console.debug('------------------------');
 
 	var that = this;
-
 	this._controllers = new Array();
 	this._templates = new Array();
 	this._routes = new Array();
@@ -69,7 +68,7 @@ function Ben() {
 	this.findControllerByID = function(id) {
 		var result;
 		// iterate over all controllers
-		$.each(Ben._controllers, function(index, contrl) {
+		$.each(that._controllers, function(index, contrl) {
 			if (contrl.id == id) {
 				result = contrl;
 				// break
@@ -89,7 +88,7 @@ function Ben() {
 	this.findTemplateByID = function(id) {
 		var result;
 		// iterate over all controllers
-		$.each(Ben._templates, function(index, templ) {
+		$.each(that._templates, function(index, templ) {
 			if (templ.id == id) {
 				result = templ;
 				// break
@@ -102,6 +101,39 @@ function Ben() {
 		else
 			console.error("ERROR: Template'" + id + "' not registered");
 	}
+	
+	
+	/**
+	 * Start the ben Application
+	 */
+	this.start = function(config) {
+		
+		if (config == undefined) {
+			config={"loadTemplatesOnStartup":true};
+		}
+		console.debug("starting application...");
+		
+		
+		console.debug("configuration=" , config);
+		// jQuery.ajaxSetup({
+		// // Disable caching of AJAX responses
+		// cache: false
+		// });
+
+		// first load views for all registered controllers and push the model....
+		$.each(that._controllers, function(index, contrl) {
+			contrl.init();
+		});
+
+		// now load templates...
+		// _load_templates();
+		if (config.loadTemplatesOnStartup) {
+			$.each(that._templates, function(index, templ) {
+				templ.load();
+			});
+		}
+	}
+
 
 }
 
@@ -111,12 +143,17 @@ function BenController(id, model, view, controller) {
 	this.model = model;
 	this.view = view;
 	this.controller = controller;
-
+	this.beforePush = $.Callbacks();
+	this.afterPush = $.Callbacks();
+	this.beforePull = $.Callbacks();
+	this.afterPull = $.Callbacks();
+	
+	
 	/**
 	 * Initializes the controller
 	 */
 	this.init = function(context) {
-		var selectorId = "[ben-controller='" + this.id + "']";
+		var selectorId = "[data-ben-controller='" + this.id + "']";
 		if ($(selectorId, context).length) {
 			console.debug("controller: '" + this.id + "' init...");
 			if (that.view)
@@ -129,29 +166,31 @@ function BenController(id, model, view, controller) {
 
 	/**
 	 * Push the controller model into the controller view. The method tests for
-	 * the elements with a 'ben-for-each' attribute and iterates separately over
+	 * the elements with a 'data-ben-foreach' attribute and iterates separately over
 	 * an existing array element.
 	 */
 	this.push = function(context) {
-		var selectorId = "[ben-controller='" + this.id + "']";
+		var selectorId = "[data-ben-controller='" + this.id + "']";
 
 		$(selectorId, context)
 				.each(
 						function() {
 							console.debug("controller: '" + that.id
 									+ "' -> push model=", that.model);
+							// callback
+							that.beforePush.fire(that, $(this));
 
 							_update_section(this, that.model, that);
 
-							// now look for all ben-for-each blocks.....
+							// now look for all data-ben-foreach blocks.....
 							$(this)
-									.find('[ben-for-each]')
+									.find('[data-ben-foreach]')
 									.each(
 											function() {
 
 												// get the model object...
 												var modelField = $(this).attr(
-														"ben-for-each");
+														"data-ben-foreach");
 												var forEachBlock = $(this);
 												var forEachBlockContent = forEachBlock
 														.clone().html().trim();
@@ -186,7 +225,7 @@ function BenController(id, model, view, controller) {
 
 													if ($.isArray(modelValue)) {
 														// copy the content of
-														// the ben-for-each
+														// the data-ben-foreach
 														// block
 														$
 																.each(
@@ -210,7 +249,8 @@ function BenController(id, model, view, controller) {
 												}
 
 											});
-
+							// callback
+							that.afterPush.fire(that, $(this));
 						});
 
 	}
@@ -218,11 +258,15 @@ function BenController(id, model, view, controller) {
 	/**
 	 * Pulls the model out of the view and update the model data
 	 */
-	this.pull = function() {
-		var selectorId = "[ben-controller='" + this.id + "']";
+	this.pull = function(){
+		// callback
+		that.beforePull.fire(that, $(this));
+		var selectorId = "[data-ben-controller='" + this.id + "']";
 		_read_section(selectorId, this.model)
 		console.debug("pull model from view '" + this.id + "': Model=",
 				this.model);
+		// callback
+		that.afterPull.fire(that, $(this));
 	}
 
 	/**
@@ -238,7 +282,7 @@ function BenController(id, model, view, controller) {
 			}
 		}
 		if (url) {
-			var selectorId = "[ben-controller='" + this.id + "']";
+			var selectorId = "[data-ben-controller='" + this.id + "']";
 
 			// document.body
 
@@ -285,7 +329,7 @@ function BenTemplate(id, url) {
 			return false;
 		}
 
-		var selectorId = "[ben-template='" + that.id + "']";
+		var selectorId = "[data-ben-template='" + that.id + "']";
 
 		// document.body
 
@@ -323,14 +367,14 @@ function BenTemplate(id, url) {
 													// this template....
 													$(templateContext)
 															.find(
-																	'[ben-controller]')
+																	'[data-ben-controller]')
 															.each(
 																	function() {
 																		var cntrl = Ben
 																				.findControllerByID($(
 																						this)
 																						.attr(
-																								"ben-controller"));
+																								"data-ben-controller"));
 																		if (cntrl)
 																			cntrl
 																					.init(templateContext);
@@ -398,9 +442,9 @@ function BenRouter(id, config) {
 
 /**
  * This helper method fills a given selector with a model object. Each element
- * with the attribute 'ben-model' inside the section will be filled with the
+ * with the attribute 'data-ben-model' inside the section will be filled with the
  * corresponding model value. If no model value exists the element will be
- * cleared. In case the element is a child of a ben-for-each block the element
+ * cleared. In case the element is a child of a data-ben-foreach block the element
  * will be ignored (see the push() method).
  * 
  * @param selectorID -
@@ -410,19 +454,19 @@ function BenRouter(id, config) {
  */
 function _update_section(selector, model, controller) {
 
-	$(selector).find('[ben-model]').each(
+	$(selector).find('[data-ben-model]').each(
 			function() {
 
-				// we ignore elements in a ben-for-each block - see push
-				if ($(this).parent('[ben-for-each]').length) {
+				// we ignore elements in a data-ben-foreach block - see push
+				if ($(this).parent('[data-ben-foreach]').length) {
 					// skip for-each!
 				} else {
-					// check if input is a ben-model
-					var modelField = $(this).attr("ben-model");
+					// check if input is a data-ben-model
+					var modelField = $(this).attr("data-ben-model");
 					if (modelField) {
 						var modelValue;
 
-						// check if ben-model is a model method....
+						// check if data-ben-model is a model method....
 						if (modelField.indexOf("(") > -1) {
 							try {
 								modelValue = eval('controller.model.'
@@ -474,16 +518,16 @@ function _update_section(selector, model, controller) {
 }
 
 /**
- * this method reads all input fields with the attribute 'ben-model' inside the
+ * this method reads all input fields with the attribute 'data-ben-model' inside the
  * given controller section and updates the corresponding model value.
  */
 function _read_section(selectorId, model) {
 
 	$(selectorId).find(':input').each(function() {
-		// $(selectorId).find('[ben-model]').each(function() {
+		// $(selectorId).find('[data-ben-model]').each(function() {
 
-		// check if input is a ben-model
-		var modelField = $(this).attr("ben-model");
+		// check if input is a data-ben-model
+		var modelField = $(this).attr("data-ben-model");
 		if (modelField) {
 
 			var modelValue = "";
@@ -508,23 +552,3 @@ function _read_section(selectorId, model) {
 	});
 
 }
-
-$(document).ready(function() {
-
-	console.debug("starting application...");
-	// jQuery.ajaxSetup({
-	// // Disable caching of AJAX responses
-	// cache: false
-	// });
-
-	// first load views for all registered controllers and push the model....
-	$.each(Ben._controllers, function(index, contrl) {
-		contrl.init();
-	});
-
-	// now load templates...
-	// _load_templates();
-	$.each(Ben._templates, function(index, templ) {
-		templ.load();
-	});
-});
