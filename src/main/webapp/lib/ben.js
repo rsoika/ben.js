@@ -101,26 +101,27 @@ function Ben() {
 		else
 			console.error("ERROR: Template'" + id + "' not registered");
 	}
-	
-	
+
 	/**
 	 * Start the ben Application
 	 */
 	this.start = function(config) {
-		
+
 		if (config == undefined) {
-			config={"loadTemplatesOnStartup":true};
+			config = {
+				"loadTemplatesOnStartup" : true
+			};
 		}
 		console.debug("starting application...");
-		
-		
-		console.debug("configuration=" , config);
+
+		console.debug("configuration=", config);
 		// jQuery.ajaxSetup({
 		// // Disable caching of AJAX responses
 		// cache: false
 		// });
 
-		// first load views for all registered controllers and push the model....
+		// first load views for all registered controllers and push the
+		// model....
 		$.each(that._controllers, function(index, contrl) {
 			contrl.init();
 		});
@@ -134,7 +135,6 @@ function Ben() {
 		}
 	}
 
-
 }
 
 function BenController(id, model, view, controller) {
@@ -147,8 +147,7 @@ function BenController(id, model, view, controller) {
 	this.afterPush = $.Callbacks();
 	this.beforePull = $.Callbacks();
 	this.afterPull = $.Callbacks();
-	
-	
+
 	/**
 	 * Initializes the controller
 	 */
@@ -166,8 +165,8 @@ function BenController(id, model, view, controller) {
 
 	/**
 	 * Push the controller model into the controller view. The method tests for
-	 * the elements with a 'data-ben-foreach' attribute and iterates separately over
-	 * an existing array element.
+	 * the elements with a 'data-ben-foreach' attribute and iterates separately
+	 * over an existing array element.
 	 */
 	this.push = function(context) {
 		var selectorId = "[data-ben-controller='" + this.id + "']";
@@ -194,16 +193,13 @@ function BenController(id, model, view, controller) {
 												var forEachBlock = $(this);
 												var forEachBlockContent = forEachBlock
 														.clone().html().trim();
-												// in case that the contentblock
-												// did not begin with
-												// an html
-												// tag add one....
-												if (!forEachBlockContent
-														.match("^<")) {
-													forEachBlockContent = "<span>"
-															+ forEachBlockContent
-															+ "</span>";
-												}
+												// surround content with a span
+												// to define a valid xhtml
+												// element...
+												forEachBlockContent = '<span data-ben-entry="">'
+														+ forEachBlockContent
+														+ '</span>';
+
 												// remove the content which was
 												// just the template...
 												$(this).empty();
@@ -258,7 +254,7 @@ function BenController(id, model, view, controller) {
 	/**
 	 * Pulls the model out of the view and update the model data
 	 */
-	this.pull = function(){
+	this.pull = function() {
 		// callback
 		that.beforePull.fire(that, $(this));
 		var selectorId = "[data-ben-controller='" + this.id + "']";
@@ -348,14 +344,14 @@ function BenTemplate(id, url) {
 												var templateContext = $(this);
 												if (status == "error") {
 													// not found!
-													var template_error = "template: '"
+													var template_error = "Error loading template '"
 															+ that.url
-															+ "' not found";
+															+ "': not found";
 													console
-															.debug(template_error);
+															.error(template_error);
 													$(this)
 															.prepend(
-																	"<!-- WARNING "
+																	"<!-- "
 																			+ template_error
 																			+ " -->");
 
@@ -442,10 +438,10 @@ function BenRouter(id, config) {
 
 /**
  * This helper method fills a given selector with a model object. Each element
- * with the attribute 'data-ben-model' inside the section will be filled with the
- * corresponding model value. If no model value exists the element will be
- * cleared. In case the element is a child of a data-ben-foreach block the element
- * will be ignored (see the push() method).
+ * with the attribute 'data-ben-model' inside the section will be filled with
+ * the corresponding model value. If no model value exists the element will be
+ * cleared. In case the element is a child of a data-ben-foreach block the
+ * element will be ignored (see the push() method).
  * 
  * @param selectorID -
  *            jquery selector
@@ -518,8 +514,8 @@ function _update_section(selector, model, controller) {
 }
 
 /**
- * this method reads all input fields with the attribute 'data-ben-model' inside the
- * given controller section and updates the corresponding model value.
+ * this method reads all input fields with the attribute 'data-ben-model' inside
+ * the given controller section and updates the corresponding model value.
  */
 function _read_section(selectorId, model) {
 
