@@ -24,7 +24,7 @@ var Ben = new Ben();
 function Ben() {
 
 	console.debug('------------------------');
-	console.debug('Ben.js: Version 0.0.5');
+	console.debug('Ben.js: Version 0.0.6');
 	console.debug('------------------------');
 
 	var that = this;
@@ -459,9 +459,28 @@ function _update_section(selector, model, controller) {
 				} else {
 					// check if input is a data-ben-model
 					var modelField = $(this).attr("data-ben-model");
+					var modelAttribute;
 					if (modelField) {
 						var modelValue;
+						// extract attribute tag '::xxx::'
+						if (modelField.match("^::")) {							
+							var n = modelField.indexOf("::",2);
+							modelAttribute = modelField.substring(2, n);
+							modelField=modelField.substring(n+2);
+							console.debug('found attr='+modelAttribute + " modelField=" + modelField);
+						} 
+						
 
+						// check if data-ben-model is scripted
+						if (modelField.match("^{")) {
+							try {
+								modelValue = eval(modelField);
+							} catch (err) {
+								console.error("Error evaluating '" + modelField
+										+ "' = " + err.message);
+							}
+						} else
+					
 						// check if data-ben-model is a model method....
 						if (modelField.indexOf("(") > -1) {
 							try {
@@ -488,6 +507,10 @@ function _update_section(selector, model, controller) {
 						if (!modelValue)
 							modelValue = "";
 
+						// test if attribute mode
+						if (modelAttribute) {
+							$(this).attr( modelAttribute, modelValue );
+						} else
 						// test for normal element
 						if (!this.type && $(this).text) {
 							$(this).text(modelValue);
