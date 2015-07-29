@@ -196,6 +196,21 @@ View example:
        ....
      </div>
 
+## Embedded Script
+
+To pass a script directly you can grasp a expression in curly braces
+
+    <span data-ben-model="getCount(controller)" />
+
+Ben.JS will execute the script directly.
+
+
+## Setting Attributes
+
+An alternative to fill the content of an element using the data-ben-model attribute you can also control an existing attribute of a HTML tag. There for you need to grasp the model expression in '::'. See the following example which computes a style class and a image src tag based on the model Attributes 'customStyle' and 'imageURL':
+
+     <p data-ben-model="::class::customStyle"> 
+     <img ben-data-model="::src::imageURL" />
 
 
 
