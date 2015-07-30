@@ -21,7 +21,9 @@
 
 
 		<h1>Ben.js - Scripting-Example</h1>
-
+		<p>The following example shows how an attribute can be computed
+			based on a model entry and how an embedded script can be used to
+			compute the result of a model entry.</p>
 
 		<div class="row">
 			<div data-ben-controller="my-controller">
@@ -34,8 +36,8 @@
 
 				</dl>
 
-				<p data-ben-model="::style::style">
-					<span data-ben-model="{model.description.toUpperCase()}" />
+				<p data-ben-model="::style::customStyle">
+					<span data-ben-model="upperCase(model.description)" />
 				</p>
 
 

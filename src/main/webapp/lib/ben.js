@@ -443,12 +443,112 @@ function BenRouter(id, config) {
  * cleared. In case the element is a child of a data-ben-foreach block the
  * element will be ignored (see the push() method).
  * 
+ * The method supports getter mehtods on the model and controller object. In
+ * this case the method must be prefixed with model. or controller.
+ * 
  * @param selectorID -
  *            jquery selector
  * @param model -
  *            modelobject
  */
 function _update_section(selector, model, controller) {
+
+	$(selector)
+			.find('[data-ben-model]')
+			.each(
+					function() {
+
+						// we ignore elements in a data-ben-foreach block - see
+						// push
+						if ($(this).parent('[data-ben-foreach]').length) {
+							// skip for-each!
+						} else {
+							// check if input is a data-ben-model
+							var modelField = $(this).attr("data-ben-model");
+							var modelAttribute;
+							if (modelField) {
+								var modelValue;
+								// extract attribute tag '::xxx::'
+								if (modelField.match("^::")) {
+									var n = modelField.indexOf("::", 2);
+									modelAttribute = modelField.substring(2, n);
+									modelField = modelField.substring(n + 2);
+								}
+
+								// check if data-ben-model is a getter method
+								if (modelField.indexOf('(') > -1) {
+									if (modelField.match("^[_a-zA-Z0-9]+\\(")) {
+										try {
+											modelValue = eval('controller.model.'
+													+ modelField);
+										} catch (err) {
+											console
+													.error("Error calling gettermethod '"
+															+ modelField
+															+ "' -> "
+															+ err.message);
+										}
+									} else {
+										// invalid method call!!
+										console
+										.error("Error invalid method call -> "
+												+ modelField);
+									}
+								} else {
+									// we assume that it is a direct field
+									// access on the
+									// model
+									// if (!modelField.match("^model.")) {
+									// modelField = "model." + modelField;
+									// }
+									modelValue = model[modelField];
+								}
+
+								if (!modelValue)
+									modelValue = "";
+
+								// test if attribute mode
+								if (modelAttribute) {
+									$(this).attr(modelAttribute, modelValue);
+								} else
+								// test for normal element
+								if (!this.type && $(this).text) {
+									$(this).text(modelValue);
+								} else {
+									// test input fields
+									switch (this.type) {
+									case 'text':
+									case 'hidden':
+									case 'password':
+									case 'select-multiple':
+									case 'select-one':
+									case 'textarea':
+										$(this).val(modelValue);
+										break;
+									case 'checkbox':
+									case 'radio':
+										this.checked = false;
+									}
+								}
+							}
+						}
+					});
+
+}
+
+/**
+ * This helper method fills a given selector with a model object. Each element
+ * with the attribute 'data-ben-model' inside the section will be filled with
+ * the corresponding model value. If no model value exists the element will be
+ * cleared. In case the element is a child of a data-ben-foreach block the
+ * element will be ignored (see the push() method).
+ * 
+ * @param selectorID -
+ *            jquery selector
+ * @param model -
+ *            modelobject
+ */
+function _OLD_update_section(selector, model, controller) {
 
 	$(selector).find('[data-ben-model]').each(
 			function() {
@@ -463,13 +563,11 @@ function _update_section(selector, model, controller) {
 					if (modelField) {
 						var modelValue;
 						// extract attribute tag '::xxx::'
-						if (modelField.match("^::")) {							
-							var n = modelField.indexOf("::",2);
+						if (modelField.match("^::")) {
+							var n = modelField.indexOf("::", 2);
 							modelAttribute = modelField.substring(2, n);
-							modelField=modelField.substring(n+2);
-							console.debug('found attr='+modelAttribute + " modelField=" + modelField);
-						} 
-						
+							modelField = modelField.substring(n + 2);
+						}
 
 						// check if data-ben-model is scripted
 						if (modelField.match("^{")) {
@@ -480,7 +578,7 @@ function _update_section(selector, model, controller) {
 										+ "' = " + err.message);
 							}
 						} else
-					
+
 						// check if data-ben-model is a model method....
 						if (modelField.indexOf("(") > -1) {
 							try {
@@ -509,7 +607,7 @@ function _update_section(selector, model, controller) {
 
 						// test if attribute mode
 						if (modelAttribute) {
-							$(this).attr( modelAttribute, modelValue );
+							$(this).attr(modelAttribute, modelValue);
 						} else
 						// test for normal element
 						if (!this.type && $(this).text) {

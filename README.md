@@ -10,6 +10,11 @@ Ben.JS is based on jQuery. To setup Ben.JS at least the latest jQuery version ne
     	   <script type="text/javascript" src="libs/ben.js"></script>
     	   <script type="text/javascript" src="app.js"></script>
     	   .....
+    	   <script>
+    	      $(document).ready(function() {
+				 Ben.start();
+			  });
+			</script>
 
 ### Examples
 This project includes a set of example pages giving an idea how to use Ben.JS. Just checkout the sources. The examples can run locally or be deploy as an application on a web server. 
@@ -153,11 +158,7 @@ To access a getter method in a view the method can be placed into the data-ben-m
     </div>
 
 ## Access the model object 
-In addition Ben.JS can also pass the current model object to your getter method. 
-For example if you have a list of entries in your model than you 
-can use the data-ben-foreach attribute to iterate over all entries. If you add the 'model' into 
-your getter method Ben.JS will pas for each iteration the array entry to you getter method. 
-See the following example:
+In addition Ben.JS can also pass the current model object in a data-ben-foreach iteration into a getter method. See the following example:
 
 
     function Company() {
@@ -179,30 +180,7 @@ View example with a for-each block:
        ....
      </div>
 
-In this example Ben.JS will pass the employer of each iteration to your getLocation method.
-
-## Access the controller
-To get access to the controller the directive 'controller' can be used to pas the controller object into a getter method:
-
-      // getter method
-       this.getCount = function(controller) {
-		  ....
-	   }
-	   
-View example: 
-
-    <div data-ben-foreach="employers" />
-        <h1 data-ben-model="getCount(controller)" ></h1>
-       ....
-     </div>
-
-## Embedded Script
-
-To pass a script directly you can grasp a expression in curly braces
-
-    <span data-ben-model="getCount(controller)" />
-
-Ben.JS will execute the script directly.
+In this example Ben.JS will pass the employer of each iteration into the getter method 'getLocation(model)'.
 
 
 ## Setting Attributes
