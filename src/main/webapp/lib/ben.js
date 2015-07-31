@@ -495,13 +495,11 @@ function _update_section(selector, model, controller) {
 												+ modelField);
 									}
 								} else {
-									// we assume that it is a direct field
-									// access on the
-									// model
+									// direct field access - praefix model do avoid script injecting
 									// if (!modelField.match("^model.")) {
 									// modelField = "model." + modelField;
 									// }
-									modelValue = model[modelField];
+									modelValue = eval('model.'+modelField);
 								}
 
 								if (!modelValue)

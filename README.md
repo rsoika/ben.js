@@ -23,12 +23,12 @@ This project includes a set of example pages giving an idea how to use Ben.JS. J
 Ben.JS provides a full working single-page-application framework. There is no restriction to any JavaScript framework without the need for JQuery. So Ben.JS can be combined with any other concept or framework including Angular.js, Ember.js or React.
 
 
-# The Model-View-Controller (MVC) Concept
-Ben.JS is based on a simple Model-View-Controller (MVC) pattern. This pattern separates an application into logical build blocks. The following section will explain the concept: 
+#The Model-View-Controller (MVC) Concept
+Ben.JS is based on a simple Model-View-Controller (MVC) pattern. This pattern separates an application into logical building blocks. The following section will explain this concept: 
 
-## The Model
+##The Model
 
-A model in Ben.JS can be any JavaScript object. There are no restrictions or specific requirements to the model object. The following example defines an Employee object with three properties:
+A model in Ben.JS can be any JavaScript object. There are no restrictions or specific requirements to design the model object. The following example defines an Employee object with 3 properties:
     
      function Employee(id, city, date) {
        this.id = id;
@@ -39,36 +39,32 @@ A model in Ben.JS can be any JavaScript object. There are no restrictions or spe
 
 ## The Controller
 
-A controller is used to bind a model to a view. Ben.JS provides the method 'crateController()' to create a new instance of a controller. The method expects an ID and a Model Object and binds the model automatically to the view. The following example creates a new controller with the ID 'my-controller' and binds a new model object of the Employee object declared before:
+A controller is used to bind a model to a view. Ben.JS provides the method 'crateController()' to create a new instance of a controller. The method expects an ID, to identify the controller, and a Model Object. The following example creates a new controller with the ID 'my-controller' and an instance of the Employee model object declared in the examaple before:
 
-    var Demo = Ben.createController("my-controller", new Employee('Anna',
+    var DemoController = Ben.createController("my-controller", new Employee('Anna',
     		'Munich', '19.7.2015'));
 
 
 ## The View
 
-The view in Ben.JS can simply be any HTML part inside the application. A view is bound to a controller which encapsulates the view. With the custom attribute 'data-ben-model' a model object provided by the controller can be pushed into any HTML element inside the view. The following example shows how the controller created before can be placed in a view:
+The view in Ben.JS can be any HTML segment within the application. A view is bound to a controller which encapsulates the view using the custom attribute 'data-ben-controller'. The following example shows how the controller with the id 'my-controller' defines a view segment:
 
-    <div data-ben-controller="myController" />
+    <div data-ben-controller="my-controller" />
        <input type="text" value="" data-ben-model="city" />
+       ID=<span data-ben-model="id" />
        ....
     </div>
     
-Ben.JS will put the name of the Employee into the Input Field when the application is loaded.
-
-The data-binding of Ben.JS is not restricted to object variables. It is also possible to call functions of a model object or combine different elements of a model. In this case the model property need to be prefixed with the 'model.' directive to a valid expression. See the following example:
-
-     Fullname: <span data-ben-model="model.fristname + ' ' + model.lastname"</span>
+Inside a view the custom attribute 'data-ben-model' is used to bind a property, provided by the controllers model object, to an HTML element. In the example above, Ben.JS will put automatically the name of the Employee into the Input Field and display the 'id' when the application is loaded.
 
 
 ### Pull and Push the model
-Ben.JS will automatically push the model provided by the controller into the view when the controller was loaded. To pull any changes out of the view back into the controller model, the method 'pull()' can be called. 
-The following HTML fragment shows how to define an action button to update the model of a controller instance:
+Ben.JS automatically pushs the model provided by the controller into the view. To pull any changes out of the view back into the controllers model, the method 'pull()' can be called. The following example shows an action used to update the model object of the controller:
 
     <div data-ben-controller="my-controller">
        Name: <input type="text" value="" data-ben-model="name" />
     </div>	
-    <input type="button" value="save" onclick="Demo.pull()"  />
+    <input type="button" value="save" onclick="DemoController.pull()"  />
 
 The save button in this example simply calls the pull() method provided by the controller to update the model with the new data entered by the user. Note: It is not necessary that this action is placed inside the controller view. The pull() method of a controller can be called in any situation. 
 
@@ -107,37 +103,34 @@ The method 'load()' from the template instance can be used to reload the content
 
     DemoTemplate.load("another.html");
  
-If the HTML page page of a template did not exists Ben.JS will print a warning into the browser console. 
+If the HTML page can not be loaded, Ben.JS will print a warning into the browser console. 
 
 
 ## View Templates
-Ben.JS is able to load a separate HTML template inside a controller. These templates are called "view-template".
-A view-template can be defined optional during creation:
+Ben.JS is able to load a separate HTML template inside a controller view. These templates are called "view-template". A view-template can be defined optional during creation:
 
     var DemoController = Ben.createController("my-controller", new Employee('Anna',
     		'Munich', '19.7.2015'),'my-special-view.html');
 
-In this example the controller will automatically load the view-template 'my-special-view.html' during the initializing phase. It is also possible to change the view-template during runtime by calling the load(url) method from the controller:
+In this example the controller will automatically load the view-template 'my-special-view.html' during the initializing phase. It is also possible to change the view-template of a controller during runtime by calling the load(url) method:
 
     DemoController.load('another-view.html');
 
-If the HTML view did not exists Ben.JS will print a warning into the browser console. 
-
 ## for-each templates
-A common requirement is to print the content of a data list form the model into the view. For example if the model contains an array of employees form the example above a view can be defined to print each employee object as an separate entry. The tag 'data-ben-foreach' is used to define a for-each template:
+A common requirement is to print the content of a data list form the model into the view. For example if the model contains an array of employees form the example above, a view can be defined to print each employee object as an separate entry. The tag 'data-ben-foreach' is used to define a for-each template:
 
-    <h3>For-Each Block: count=<span data-ben-model="model.employers.length"</span></h3>
-        <div data-ben-foreach="employers">
-            Name=<span data-ben-model="name"></span> 
-            <br /> 
-            City=<span data-ben-model="city"></span>
-            <hr />
-        </div
+    <h3>For-Each Block: count=<span data-ben-model="employers.length"</span></h3>
+    <div data-ben-foreach="employers">
+         Name=<span data-ben-model="name"></span> 
+         <br /> 
+         City=<span data-ben-model="city"></span>
+         <hr />
+    </div
 
-Ben.JS will automatically iterate over the model object 'employers' and generates for each entry a HTML fragment. This example above shows that the data-binding is not restricted to object variables. It is also possible to call functions of a model object.
+Ben.JS will automatically iterate over the model object 'employers' and generates for each entry a HTML fragment. 
 
 # Getter Methods
-Ben.JS supports the concept of getter methods in a model object. Those methods can be used to compute complex data entries. The following example shows how a getter method is used to compute the property 'fullname':
+Ben.JS supports the concept of getter methods on a model object. Those methods can be used to compute complex data entries. The following example shows how a getter method is used to compute the property 'fullname':
 
 
     function Employee(id, firstname, lastname) {
@@ -156,6 +149,8 @@ To access a getter method in a view the method can be placed into the data-ben-m
        <h1 data-ben-model="getFullname()" ></h1>
        ....
     </div>
+
+Note: A getter method can only be called on the model object of the controller. 
 
 ## Access the model object 
 In addition Ben.JS can also pass the current model object in a data-ben-foreach iteration into a getter method. See the following example:
