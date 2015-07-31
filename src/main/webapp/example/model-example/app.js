@@ -5,9 +5,9 @@ function Employee(name, city, date) {
 
 }
 
-var Demo = Ben.createController("my-controller", new Employee('Anna', 'Munich',
+var Demo = benJS.createController("my-controller", new Employee('Anna', 'Munich',
 		'19.7.2015'));
 
 $(document).ready(function() {
-	Ben.start();
+	benJS.start();
 });

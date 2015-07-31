@@ -19,9 +19,7 @@
  * Contributors: Ralph Soika - Software Developer
  ******************************************************************************/
 
-var Ben = new Ben();
-
-function Ben() {
+var Ben = function () {
 
 	console.debug('------------------------');
 	console.debug('Ben.js: Version 0.0.6');
@@ -135,7 +133,7 @@ function Ben() {
 		}
 	}
 
-}
+};
 
 function BenController(id, model, view, controller) {
 	var that = this;
@@ -366,7 +364,7 @@ function BenTemplate(id, url) {
 																	'[data-ben-controller]')
 															.each(
 																	function() {
-																		var cntrl = Ben
+																		var cntrl = benJS
 																				.findControllerByID($(
 																						this)
 																						.attr(
@@ -406,7 +404,7 @@ function BenRouter(id, config) {
 		var keys = Object.keys(that.config);
 
 		$.each(keys, function(index, templID) {
-			var templ = Ben.findTemplateByID(templID);
+			var templ = benJS.findTemplateByID(templID);
 			if (templ) {
 				templ.url = that.config[templID];
 				templ.afterLoad.add(that._templateOnLoad);
@@ -668,3 +666,6 @@ function _read_section(selectorId, model) {
 	});
 
 }
+
+// create the ben instance
+var benJS = new Ben();

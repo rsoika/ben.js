@@ -7,11 +7,11 @@ function Employee(name, city, date) {
 	this.date = date;
 }
 
-var DemoController = Ben.createController("my-controller", new Employee('Anna', 'Munich',
+var DemoController = benJS.createController("my-controller", new Employee('Anna', 'Munich',
 		'19.7.2015'));
 
 // register template
-var Template1 = Ben.createTemplate("template1", "my-template.html");
+var Template1 = benJS.createTemplate("template1", "my-template.html");
 Template1.beforeLoad.add(function(f) {
 	console.log("App: template loading started");
 });
@@ -19,7 +19,7 @@ Template1.afterLoad.add(function(f) {
 	console.log("App: template loading finished");
 });
 // register a new Route
-var Route1 = Ben.createRoute('route1', {
+var Route1 = benJS.createRoute('route1', {
 	"template1" : "my-template.html"
 });
 Route1.afterRoute.add(function(f) {
@@ -34,5 +34,5 @@ DemoController.initWorkitem = function(f) {
 }
 
 $(document).ready(function() {
-	Ben.start();
+	benJS.start();
 });

@@ -12,7 +12,7 @@ Ben.JS is based on jQuery. To setup Ben.JS at least the latest jQuery version ne
     	   .....
     	   <script>
     	      $(document).ready(function() {
-				 Ben.start();
+				 benJS.start();
 			  });
 			</script>
 
@@ -41,7 +41,7 @@ A model in Ben.JS can be any JavaScript object. There are no restrictions or spe
 
 A controller is used to bind a model to a view. Ben.JS provides the method 'crateController()' to create a new instance of a controller. The method expects an ID, to identify the controller, and a Model Object. The following example creates a new controller with the ID 'my-controller' and an instance of the Employee model object declared in the examaple before:
 
-    var DemoController = Ben.createController("my-controller", new Employee('Anna',
+    var DemoController = benJS.createController("my-controller", new Employee('Anna',
     		'Munich', '19.7.2015'));
 
 
@@ -73,7 +73,7 @@ The save button in this example simply calls the pull() method provided by the c
 # Templates
 Ben.JS provides a templating concept which allows to separate a page into logical HTML fragments. To define a new template the method createTemplate() is called. The method returns an instance of a template. See the following example:
 
-    var DemoTemplate = Ben.createTemplate("my-template","some.html");
+    var DemoTemplate = benJS.createTemplate("my-template","some.html");
 
 A template is defined by an ID and an optional HTML page which will be loaded automatically during startup.
 In the main HTML page a template can be placed at any location using the tag 'data-ben-template'. The following example shows how to define templates in a index.html:
@@ -109,7 +109,7 @@ If the HTML page can not be loaded, Ben.JS will print a warning into the browser
 ## View Templates
 Ben.JS is able to load a separate HTML template inside a controller view. These templates are called "view-template". A view-template can be defined optional during creation:
 
-    var DemoController = Ben.createController("my-controller", new Employee('Anna',
+    var DemoController = benJS.createController("my-controller", new Employee('Anna',
     		'Munich', '19.7.2015'),'my-special-view.html');
 
 In this example the controller will automatically load the view-template 'my-special-view.html' during the initializing phase. It is also possible to change the view-template of a controller during runtime by calling the load(url) method:
@@ -191,7 +191,7 @@ An alternative to fill the content of an element using the data-ben-model attrib
 
 Routes are used to navigate inside the application.  aBen.JS provides a router concept which allows to define different states on an application. To define a new route the method createRoute() is called. The method returns an instance of a route. See the following example:
 
-    Route1 = Ben.createRoute('route1', {"template1" : "my-template.html" });
+    Route1 = benJS.createRoute('route1', {"template1" : "my-template.html" });
 
 The method expects an ID and a route description containing an array of templates. When a route is called Ben.JS automatically refreshes all defined templates.
 

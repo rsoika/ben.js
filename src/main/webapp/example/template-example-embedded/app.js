@@ -17,11 +17,11 @@ function Company() {
 
 }
 
-var DemoController = Ben.createController("my-controller", new Company(),"view.html");
+var DemoController = benJS.createController("my-controller", new Company(),"view.html");
 
-var DemoTemplate = Ben.createTemplate("my-template", "template.html");
+var DemoTemplate = benJS.createTemplate("my-template", "template.html");
 
 
 $(document).ready(function() {
-	Ben.start();
+	benJS.start();
 });
