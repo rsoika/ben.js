@@ -491,15 +491,16 @@ function _update_section(selector, model, controller) {
 									} else {
 										// invalid method call!!
 										console
-										.error("Error invalid method call -> "
-												+ modelField);
+												.error("Error invalid method call -> "
+														+ modelField);
 									}
 								} else {
-									// direct field access - praefix model do avoid script injecting
-									// if (!modelField.match("^model.")) {
-									// modelField = "model." + modelField;
-									// }
-									modelValue = eval('model.'+modelField);
+									// direct field access - prefix with model.
+									// to avoid script injecting
+									if (!modelField.match("^model.")) {
+										modelField = "model." + modelField;
+									}
+									modelValue = eval(modelField);
 								}
 
 								if (!modelValue)
