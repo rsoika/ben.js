@@ -204,13 +204,10 @@ function BenController(id, model, view, controller) {
 							// test if parent foeach...
 							var parentForEachBlocks = $(this).closest(
 									'[data-ben-foreach]');
-							
-							var selectorForEachBlocks = $(selector).closest(
-									'[data-ben-foreach]');
 
 							if (parentForEachBlocks.length === 0
-									|| $(parentForEachBlocks).get(0) === $(selectorForEachBlocks).get(0)
-							 ) {
+									|| $(parentForEachBlocks).get(0) === $(
+											selector).get(0)) {
 								console.log('  ...fülle daten ...');
 
 								_update_element(this, modelField, model, that);
@@ -236,49 +233,23 @@ function BenController(id, model, view, controller) {
 									'[data-ben-foreach]');
 
 							if (parentForEachBlocks.length === 0
-									|| $(parentForEachBlocks).get(0) === $(this).get(0)) {
+									|| $(parentForEachBlocks).get(0) === $(this)
+											.get(0)) {
 								console.log('  ...fülle foreach ...');
 
 								console.log(' tu son unterding machen');
 
-								var foreachModel = _extract_model_value(
+								var neuesModel = _extract_model_value(
 										modelField, model, controller);
 
-								
-								var forEachBlock = $(this);
-								var forEachBlockContent = forEachBlock
-										.clone().html().trim();
-								// surround content with a span
-								// to define a valid xhtml
-								// element...
-								forEachBlockContent = '<span data-ben-entry="">'
-										+ forEachBlockContent
-										+ '</span>';
-
-								// remove the content which was
-								// just the template...
-								$(this).empty();
-							
-								if ($.isArray(foreachModel)) {
+								var bereich = this;
+								if ($.isArray(neuesModel)) {
 									// copy the content of
 									// the data-ben-foreach
 									// block
-									$.each(foreachModel, function(index,
+									$.each(neuesModel, function(index,
 											model_element) {
-										
-										
-										
-										
-									var newEntry = $.parseHTML(forEachBlockContent);
-									// update entry  index
-									$(newEntry).attr("data-ben-entry",index);
-
-									var entryBlock = $(forEachBlock).append(newEntry);
-
-								
-									//that._update(bereich, model_element);
-									that._update(newEntry, model_element);
-									
+										that._update(bereich, model_element);
 									});
 								}
 

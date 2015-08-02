@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8">
+<title>Ben.js Demo</title>
+
+
+<link href="../../css/creatix-basic.css" rel="stylesheet" />
+<link href="../../css/creatix-forms.css" rel="stylesheet" />
+<link href="../../css/creatix-layout.css" rel="stylesheet" />
+<link href="../../css/custom.css" rel="stylesheet" />
+
+
+</head>
+
+<body>
+
+
+	<div id="container">
+
+
+		<h1>Ben.js - Nested For-Each-Example</h1>
+
+
+		<div class="row">
+			<div data-ben-controller="my-controller">
+
+				<div>
+
+					<h3>
+						For-Each Block: count=<span data-ben-model="employers.length"></span>
+					</h3>
+
+					<div data-ben-foreach="employers">
+
+						<div>
+							City=<span data-ben-model="city"></span> <br />
+
+						</div>
+
+						<div>
+							<h3>Skills:</h3>
+
+
+							
+
+								<ul data-ben-foreach="skills">
+									<li>Skill=<span data-ben-model="."></span></li>
+								</ul>
+						
+
+
+
+						</div>
+						<hr />
+
+					</div>
+
+					<p>
+						Just another single model value: <em><span
+							data-ben-model="test"></span> </em>
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../lib/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="../../lib/ben.js"></script>
+	<script type="text/javascript" src="app.js"></script>
+</body>
+
+</html>
