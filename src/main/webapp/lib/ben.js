@@ -22,7 +22,7 @@
 var Ben = function () {
 
 	console.debug('------------------------');
-	console.debug('Ben.js: Version 0.0.6');
+	console.debug('Ben.js: Version 0.0.7');
 	console.debug('------------------------');
 
 	var that = this;
