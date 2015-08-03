@@ -208,8 +208,8 @@ function BenController(id, model, view, controller) {
 						function() {
 
 							var modelField = $(this).attr("data-ben-model");
-							//console.log("1.) data-ben-model=" + modelField);
-
+						//	console.log("_update: checking data-ben-model=" + modelField);
+							
 							// test if parent foeach...
 							var parentForEachBlocks = $(this).closest(
 									'[data-ben-foreach]');
@@ -237,16 +237,12 @@ function BenController(id, model, view, controller) {
 						function() {
 
 							var modelField = $(this).attr("data-ben-foreach");
-							//console.log("2.) data-ben-foreach=" + modelField);
-							
+							//console.log("_update: checking data-ben-foreach=" + modelField);
+							var parent=$(this).parent('[data-ben-foreach]');
 							var foreachModel = _extract_model_value(
 									modelField, model, controller);
-							//console.log("ist '" + modelField + "' ein array? = "+$.isArray(foreachModel));
-							
-							if (foreachModel && $.isArray(foreachModel)) {
-								
-								//console.log('  ...fülle foreach ...');
 
+							if (parent.length===0 && foreachModel && $.isArray(foreachModel)) {
 								var forEachBlock = $(this);
 								var forEachBlockContent = forEachBlock.clone()
 										.html().trim();
@@ -258,9 +254,7 @@ function BenController(id, model, view, controller) {
 								// remove the content which was
 								// just the template...
 								$(this).empty();
-
-								if ($.isArray(foreachModel)) {
-									
+								if ($.isArray(foreachModel)) {									
 									// copy the content of the data-ben-foreach
 									// block
 									$
@@ -290,10 +284,6 @@ function BenController(id, model, view, controller) {
 													});
 									//console.log(' finished recursion call ');
 								}
-
-								
-								//return false;
-
 							} 
 
 						});
@@ -498,18 +488,8 @@ function BenRouter(id, config) {
  *            modelobject
  */
 function _extract_model_value(modelField, model, controller) {
-
-	var modelAttribute;
 	if (modelField) {
-
 		var modelValue;
-		// extract attribute tag '::xxx::'
-		if (modelField.match("^::")) {
-			var n = modelField.indexOf("::", 2);
-			modelAttribute = modelField.substring(2, n);
-			modelField = modelField.substring(n + 2);
-		}
-
 		// check if data-ben-model is a getter method
 		if (modelField.indexOf('(') > -1) {
 			if (modelField.match("^[_a-zA-Z0-9]+\\(")) {
@@ -556,9 +536,15 @@ function _extract_model_value(modelField, model, controller) {
  *            modelobject
  */
 function _update_element(selector, modelField, model, controller) {
-
 	var modelAttribute;
 	if (modelField) {
+		// extract attribute tag '::xxx::'
+		if (modelField.match("^::")) {
+			var n = modelField.indexOf("::", 2);
+			modelAttribute = modelField.substring(2, n);
+			modelField = modelField.substring(n + 2);
+		}
+
 		var modelValue = _extract_model_value(modelField, model, controller);
 
 		if (modelValue) {
@@ -567,11 +553,11 @@ function _update_element(selector, modelField, model, controller) {
 				$(selector).attr(modelAttribute, modelValue);
 			} else
 			// test for normal element
-			if (!$(selector).type && $(selector).text) {
+			if (!selector.type && $(selector).text) {
 				$(selector).text(modelValue);
 			} else {
 				// test input fields
-				switch ($(selector).type) {
+				switch (selector.type) {
 				case 'text':
 				case 'hidden':
 				case 'password':

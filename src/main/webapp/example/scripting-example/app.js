@@ -13,10 +13,10 @@ function Employee(name, city, date,description) {
 	}
 
 }
-
-var Demo = Ben.createController("my-controller", new Employee('Anna', 'Munich',
+ 
+var Demo = benJS.createController("my-controller", new Employee('Anna', 'Munich',
 		'19.7.2015','some custom text example...'));
 
 $(document).ready(function() {
-	Ben.start();
+	benJS.start();
 });
