@@ -7,9 +7,9 @@ function Employee(name, city, date,skills) {
 
 function Company() {
 	this.employers = new Array();
-	this.employers.push(new Employee('Anna', 'Munich', '19.7.2015',['a','b','c']));
-	this.employers.push(new Employee('Sam', 'Berlin', '20.7.2015',['d','e','f']));
-	this.employers.push(new Employee('Douglas', 'Hamburg', '21.7.2015',['g','h','i']));
+	this.employers.push(new Employee('Anna', 'Munich', '19.7.2015',['Java','JavaScript','C++']));
+	this.employers.push(new Employee('Sam', 'Berlin', '20.7.2015',['HTML5','CSS3','Java']));
+	this.employers.push(new Employee('Douglas', 'Hamburg', '21.7.2015',['.NET','Spring','JEE']));
 	this.test = "Example Value";
 
 }
