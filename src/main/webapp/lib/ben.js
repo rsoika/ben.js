@@ -197,64 +197,66 @@ function BenController(id, model, view, controller) {
 	this._update = function(selector, model) {
 		that = this;
 
-		//console.log('_update starting...');
-
-		/* 
-		 * test data-ben-model elements..
-		 */
-		$(selector)
-				.find('[data-ben-model]')
-				.each(
-						function() {
-
-							var modelField = $(this).attr("data-ben-model");
-						//	console.log("_update: checking data-ben-model=" + modelField);
-							
-							// test if parent foeach...
-							var parentForEachBlocks = $(this).closest(
-									'[data-ben-foreach]');
-							var selectorForEachBlocks = $(selector).closest(
-									'[data-ben-foreach]');
-
-							if (parentForEachBlocks.length === 0
-									|| $(parentForEachBlocks).get(0) === $(
-											selectorForEachBlocks).get(0)) {
-								//console.log('  ...fülle daten ...');
-
-								_update_element(this, modelField, model, that);
-
-							} else {
-								// child element - do skip!
-							}
-						});
+		// console.log('_update starting...');
 
 		/*
-		 *  now test data-ben-foreach blocks with recursive call
+		 * test data-ben-model elements..
+		 */
+		$(selector).find('[data-ben-model]').each(
+				function() {
+
+					var modelField = $(this).attr("data-ben-model");
+					// console.log("_update: checking data-ben-model=" +
+					// modelField);
+
+					// test if parent foeach...
+					var parentForEachBlocks = $(this).closest(
+							'[data-ben-foreach]');
+					var selectorForEachBlocks = $(selector).closest(
+							'[data-ben-foreach]');
+
+					if (parentForEachBlocks.length === 0
+							|| $(parentForEachBlocks).get(0) === $(
+									selectorForEachBlocks).get(0)) {
+						_update_element(this, modelField, model, that);
+
+					} else {
+						// child element - do skip!
+					}
+				});
+
+		/*
+		 * now test data-ben-foreach blocks with recursive call
 		 */
 		$(selector)
 				.find('[data-ben-foreach]')
 				.each(
 						function() {
-
 							var modelField = $(this).attr("data-ben-foreach");
-							//console.log("_update: checking data-ben-foreach=" + modelField);
-							var parent=$(this).parent('[data-ben-foreach]');
-							var foreachModel = _extract_model_value(
-									modelField, model, controller);
+							var parent = $(this).parent('[data-ben-foreach]');
+							var foreachModel = _extract_model_value(modelField,
+									model, controller);
 
-							if (parent.length===0 && foreachModel && $.isArray(foreachModel)) {
+							if (parent.length === 0 && foreachModel
+									&& $.isArray(foreachModel)) {
 								var forEachBlock = $(this);
 								var forEachBlockContent = forEachBlock.clone()
 										.html().trim();
-								// surround content with a span
-								// to define a valid xhtml element...
-								forEachBlockContent = '<span data-ben-entry="">'
-										+ forEachBlockContent + '</span>';
+								// if content block is no valid XHTML or
+								// contains more than one child element,
+								// surround content with a span to define a
+								// valid xhtml element
+								if (forEachBlockContent.indexOf('<') != 0
+										|| forEachBlockContent.indexOf('<!--') === 0
+										|| $(this).children().length > 1) {
+									forEachBlockContent = '<span data-ben-entry="">'
+											+ forEachBlockContent + '</span>';
+								}
 
 								// remove the content which was
 								// just the template...
 								$(this).empty();
-								if ($.isArray(foreachModel)) {									
+								if ($.isArray(foreachModel)) {
 									// copy the content of the data-ben-foreach
 									// block
 									$
@@ -282,15 +284,12 @@ function BenController(id, model, view, controller) {
 																model_element);
 
 													});
-									//console.log(' finished recursion call ');
 								}
-							} 
+							}
 
 						});
 
 	}
-
-	
 
 	/**
 	 * Pulls the model out of the view and update the model data
@@ -575,7 +574,6 @@ function _update_element(selector, modelField, model, controller) {
 	}
 
 }
-
 
 /**
  * this method reads all input fields with the attribute 'data-ben-model' inside
