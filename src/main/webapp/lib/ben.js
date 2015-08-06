@@ -517,7 +517,7 @@ function _extract_model_value(modelField, model, controller) {
 			modelValue = eval(modelField);
 		}
 
-		if (!modelValue)
+		if ((typeof (modelValue) == "undefined"))
 			modelValue = "";
 
 		return modelValue;
@@ -546,31 +546,30 @@ function _update_element(selector, modelField, model, controller) {
 
 		var modelValue = _extract_model_value(modelField, model, controller);
 
-		if (modelValue) {
-			// test if attribute mode
-			if (modelAttribute) {
-				$(selector).attr(modelAttribute, modelValue);
-			} else
-			// test for normal element
-			if (!selector.type && $(selector).text) {
-				$(selector).text(modelValue);
-			} else {
-				// test input fields
-				switch (selector.type) {
-				case 'text':
-				case 'hidden':
-				case 'password':
-				case 'select-multiple':
-				case 'select-one':
-				case 'textarea':
-					$(selector).val(modelValue);
-					break;
-				case 'checkbox':
-				case 'radio':
-					$(selector).checked = false;
-				}
+		// test if attribute mode
+		if (modelAttribute) {
+			$(selector).attr(modelAttribute, modelValue);
+		} else
+		// test for normal element
+		if (!selector.type && $(selector).text) {
+			$(selector).text(modelValue);
+		} else {
+			// test input fields
+			switch (selector.type) {
+			case 'text':
+			case 'hidden':
+			case 'password':
+			case 'select-multiple':
+			case 'select-one':
+			case 'textarea':
+				$(selector).val(modelValue);
+				break;
+			case 'checkbox':
+			case 'radio':
+				$(selector).checked = false;
 			}
 		}
+
 	}
 
 }
