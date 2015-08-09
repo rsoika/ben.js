@@ -30,14 +30,11 @@ var Ben = function() {
 	this._templates = new Array();
 	this._routes = new Array();
 
-	this.createController = function(id, model, view, appController) {
+	this.createController = function(id, model, view) {
 		console.debug('register new controller: \'' + id + '\'');
-		var aController = new BenController(id, model, view, appController);
+		var aController = new BenController(id, model, view);
 		that._controllers.push(aController);
-		if (appController)
-			return appController;
-		else
-			return aController;
+		return aController;
 	}
 
 	this.createRoute = function(url, controllers) {
@@ -135,12 +132,12 @@ var Ben = function() {
 
 };
 
-function BenController(id, model, view, controller) {
+function BenController(id, model, view) {
 	var that = this;
 	this.id = id;
 	this.model = model;
 	this.view = view;
-	this.controller = controller;
+	//this.controller = controller;
 	this.beforePush = $.Callbacks();
 	this.afterPush = $.Callbacks();
 	this.beforePull = $.Callbacks();
@@ -156,7 +153,7 @@ function BenController(id, model, view, controller) {
 			if (that.view)
 				that.load(that.view, context);
 			else
-				// no view defined just push the model!
+				// no view defined just push the model! 
 				that.push(context);
 		}
 	}
@@ -184,112 +181,7 @@ function BenController(id, model, view, controller) {
 
 	}
 
-	/**
-	 * This helper method fills a given selector with a model object. Each
-	 * element with the attribute 'data-ben-model' inside the section will be
-	 * filled with the corresponding model value. If no model value exists the
-	 * element will be cleared. In case the element is a child of a
-	 * data-ben-foreach block the new elements will be created for each entry in
-	 * the model object. The method makes a recursive call to itself.
-	 * 
-	 * 
-	 */
-	this._update = function(selector, model) {
-		that = this;
-
-		// console.log('_update starting...');
-
-		/*
-		 * test data-ben-model elements..
-		 */
-		$(selector).find('[data-ben-model]').each(
-				function() {
-
-					var modelField = $(this).attr("data-ben-model");
-					// console.log("_update: checking data-ben-model=" +
-					// modelField);
-
-					// test if parent foeach...
-					var parentForEachBlocks = $(this).closest(
-							'[data-ben-foreach]');
-					var selectorForEachBlocks = $(selector).closest(
-							'[data-ben-foreach]');
-
-					if (parentForEachBlocks.length === 0
-							|| $(parentForEachBlocks).get(0) === $(
-									selectorForEachBlocks).get(0)) {
-						_update_element(this, modelField, model, that);
-
-					} else {
-						// child element - do skip!
-					}
-				});
-
-		/*
-		 * now test data-ben-foreach blocks with recursive call
-		 */
-		$(selector)
-				.find('[data-ben-foreach]')
-				.each(
-						function() {
-							var modelField = $(this).attr("data-ben-foreach");
-							var parent = $(this).parent('[data-ben-foreach]');
-							var foreachModel = _extract_model_value(modelField,
-									model, controller);
-
-							if (parent.length === 0 && foreachModel
-									&& $.isArray(foreachModel)) {
-								var forEachBlock = $(this);
-								var forEachBlockContent = forEachBlock.clone()
-										.html().trim();
-								// if content block is no valid XHTML or
-								// contains more than one child element,
-								// surround content with a span to define a
-								// valid xhtml element
-								if (forEachBlockContent.indexOf('<') != 0
-										|| forEachBlockContent.indexOf('<!--') === 0
-										|| $(this).children().length > 1) {
-									forEachBlockContent = '<span data-ben-entry="">'
-											+ forEachBlockContent + '</span>';
-								}
-
-								// remove the content which was
-								// just the template...
-								$(this).empty();
-								if ($.isArray(foreachModel)) {
-									// copy the content of the data-ben-foreach
-									// block
-									$
-											.each(
-													foreachModel,
-													function(index,
-															model_element) {
-
-														var newEntry = $
-																.parseHTML(forEachBlockContent);
-														// update entry index
-														$(newEntry)
-																.attr(
-																		"data-ben-entry",
-																		index);
-
-														var entryBlock = $(
-																forEachBlock)
-																.append(
-																		newEntry);
-
-														// that._update(bereich,
-														// model_element);
-														that._update(newEntry,
-																model_element);
-
-													});
-								}
-							}
-
-						});
-
-	}
+	
 
 	/**
 	 * Pulls the model out of the view and update the model data
@@ -348,6 +240,216 @@ function BenController(id, model, view, controller) {
 					});
 		}
 	}
+	
+	/**
+	 * This helper method fills a given selector with a model object. Each
+	 * element with the attribute 'data-ben-model' inside the section will be
+	 * filled with the corresponding model value. If no model value exists the
+	 * element will be cleared. In case the element is a child of a
+	 * data-ben-foreach block the new elements will be created for each entry in
+	 * the model object. The method makes a recursive call to itself.
+	 * 
+	 * 
+	 */
+	this._update = function(selector, model) {
+		// console.log('_update starting...');
+
+		/*
+		 * test data-ben-model elements..
+		 */
+		$(selector).find('[data-ben-model]').each(
+				function() {
+
+					var modelField = $(this).attr("data-ben-model");
+					// console.log("_update: checking data-ben-model=" +
+					// modelField);
+
+					// test if parent foeach...
+					var parentForEachBlocks = $(this).closest(
+							'[data-ben-foreach]');
+					var selectorForEachBlocks = $(selector).closest(
+							'[data-ben-foreach]');
+
+					if (parentForEachBlocks.length === 0
+							|| $(parentForEachBlocks).get(0) === $(
+									selectorForEachBlocks).get(0)) {
+						that._update_element(this, modelField, model);
+
+					} else {
+						// child element - do skip!
+					}
+				});
+
+		/*
+		 * now test data-ben-foreach blocks with recursive call
+		 */
+		$(selector)
+				.find('[data-ben-foreach]')
+				.each(
+						function() {
+							var modelField = $(this).attr("data-ben-foreach");
+							var parent = $(this).parent('[data-ben-foreach]');
+							var foreachModel = that._extract_model_value(modelField,
+									model);
+
+							if (parent.length === 0 && foreachModel
+									&& $.isArray(foreachModel)) {
+								var forEachBlock = $(this);
+								var forEachBlockContent = forEachBlock.clone()
+										.html().trim();
+								// if content block is no valid XHTML or
+								// contains more than one child element,
+								// surround content with a span to define a
+								// valid xhtml element
+								if (forEachBlockContent.indexOf('<') != 0
+										|| forEachBlockContent.indexOf('<!--') === 0
+										|| $(this).children().length > 1) {
+									forEachBlockContent = '<span data-ben-entry="">'
+											+ forEachBlockContent + '</span>';
+								}
+
+								// remove the content which was
+								// just the template...
+								$(this).empty();
+								if ($.isArray(foreachModel)) {
+									// copy the content of the data-ben-foreach
+									// block
+									$
+											.each(
+													foreachModel,
+													function(index,
+															model_element) {
+
+														var newEntry = $
+																.parseHTML(forEachBlockContent);
+														// update entry index
+														$(newEntry)
+																.attr(
+																		"data-ben-entry",
+																		index);
+
+														var entryBlock = $(
+																forEachBlock)
+																.append(
+																		newEntry);
+
+														// that._update(bereich,
+														// model_element);
+														that._update(newEntry,
+																model_element);
+
+													});
+								}
+							}
+
+						});
+
+	}
+
+	
+	
+	/**
+	 * This helper method fills a given element with a model object.
+	 * 
+	 * @param selectorID -
+	 *            jquery selector
+	 * @param model -
+	 *            modelobject
+	 */
+	this._update_element = function(selector, modelField, model) {
+		var modelAttribute;
+		if (modelField) {
+			// extract attribute tag '::xxx::'
+			if (modelField.match("^::")) {
+				var n = modelField.indexOf("::", 2);
+				modelAttribute = modelField.substring(2, n);
+				modelField = modelField.substring(n + 2);
+			}
+
+			var modelValue = that._extract_model_value(modelField, model);
+
+			// test if attribute mode
+			if (modelAttribute) {
+				$(selector).attr(modelAttribute, modelValue);
+			} else
+			// test for normal element
+			if (!selector.type && $(selector).text) {
+				$(selector).text(modelValue);
+			} else {
+				// test input fields
+				switch (selector.type) {
+				case 'text':
+				case 'hidden':
+				case 'password':
+				case 'select-multiple':
+				case 'select-one':
+				case 'textarea':
+					$(selector).val(modelValue);
+					break;
+				case 'checkbox':
+				case 'radio':
+					$(selector).checked = false;
+				}
+			}
+
+		}
+
+	}
+	
+	
+
+	/**
+	 * This helper method extract a given model object. The method supports getter
+	 * methods on the model and controller object. In this case the method must be
+	 * prefixed with model. or controller.
+	 * 
+	 * @param selectorID -
+	 *            jquery selector
+	 * @param model -
+	 *            modelobject
+	 */
+	this._extract_model_value = function(modelField, model) {
+		if (modelField) {
+			var modelValue;
+			// check if data-ben-model is a getter method
+			if (modelField.indexOf('(') > -1) {
+				if (modelField.match("^[_a-zA-Z0-9]+\\(")) {
+					try {
+						modelValue = eval('this.model.' + modelField);
+					} catch (err) {
+						console.error("Error calling gettermethod '" + modelField
+								+ "' -> " + err.message);
+					}
+				} else {
+					// invalid method call!!
+					console.error("Error invalid method call -> " + modelField);
+				}
+			} else {
+				// direct field access - prefix with model.
+				// to avoid script injecting
+
+				// check short-cut
+				if (modelField === '.') {
+					modelField = "model";
+				} else {
+					if (!modelField.match("^model.")) {
+						modelField = "model." + modelField;
+					}
+				}
+				modelValue = eval(modelField);
+			}
+
+			if ((typeof (modelValue) == "undefined"))
+				modelValue = "";
+
+			return modelValue;
+
+		}
+
+	}
+
+
+	
 }
 
 function BenTemplate(id, url) {
@@ -476,103 +578,6 @@ function BenRouter(id, config) {
 	}
 }
 
-/**
- * This helper method extract a given model object. The method supports getter
- * methods on the model and controller object. In this case the method must be
- * prefixed with model. or controller.
- * 
- * @param selectorID -
- *            jquery selector
- * @param model -
- *            modelobject
- */
-function _extract_model_value(modelField, model, controller) {
-	if (modelField) {
-		var modelValue;
-		// check if data-ben-model is a getter method
-		if (modelField.indexOf('(') > -1) {
-			if (modelField.match("^[_a-zA-Z0-9]+\\(")) {
-				try {
-					modelValue = eval('controller.model.' + modelField);
-				} catch (err) {
-					console.error("Error calling gettermethod '" + modelField
-							+ "' -> " + err.message);
-				}
-			} else {
-				// invalid method call!!
-				console.error("Error invalid method call -> " + modelField);
-			}
-		} else {
-			// direct field access - prefix with model.
-			// to avoid script injecting
-
-			// check short-cut
-			if (modelField === '.') {
-				modelField = "model";
-			} else {
-				if (!modelField.match("^model.")) {
-					modelField = "model." + modelField;
-				}
-			}
-			modelValue = eval(modelField);
-		}
-
-		if ((typeof (modelValue) == "undefined"))
-			modelValue = "";
-
-		return modelValue;
-
-	}
-
-}
-
-/**
- * This helper method fills a given element with a model object.
- * 
- * @param selectorID -
- *            jquery selector
- * @param model -
- *            modelobject
- */
-function _update_element(selector, modelField, model, controller) {
-	var modelAttribute;
-	if (modelField) {
-		// extract attribute tag '::xxx::'
-		if (modelField.match("^::")) {
-			var n = modelField.indexOf("::", 2);
-			modelAttribute = modelField.substring(2, n);
-			modelField = modelField.substring(n + 2);
-		}
-
-		var modelValue = _extract_model_value(modelField, model, controller);
-
-		// test if attribute mode
-		if (modelAttribute) {
-			$(selector).attr(modelAttribute, modelValue);
-		} else
-		// test for normal element
-		if (!selector.type && $(selector).text) {
-			$(selector).text(modelValue);
-		} else {
-			// test input fields
-			switch (selector.type) {
-			case 'text':
-			case 'hidden':
-			case 'password':
-			case 'select-multiple':
-			case 'select-one':
-			case 'textarea':
-				$(selector).val(modelValue);
-				break;
-			case 'checkbox':
-			case 'radio':
-				$(selector).checked = false;
-			}
-		}
-
-	}
-
-}
 
 /**
  * this method reads all input fields with the attribute 'data-ben-model' inside
