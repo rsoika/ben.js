@@ -9,7 +9,14 @@
 
 	<description>Single Page Application Framework </description>
 
-
+	<licenses>
+		<license>
+			<name>GNU General Public License</name>
+			<url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>All the results of the imixs workflow project are subject to the GPL licensing model. </comments>
+		</license>
+	</licenses>
 
 	<organization>
 		<name>Imixs Software Solutions GmbH</name>
@@ -50,8 +57,23 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
+				<version>2.5.2</version>
 			</plugin>
-
+			<plugin>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.7</version>
+			</plugin>
+			<!-- web site -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.4</version>
+				<configuration>
+					<locales>en</locales>
+					<templateDirectory>src/site</templateDirectory>
+					<template>site.vm</template>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -59,4 +81,14 @@
 
 
 	</dependencies>
+	<url>https://github.com/rsoika/ben.js</url>
+	<scm>
+		<url>https://github.com/rsoika/ben.js</url>
+		<connection>scm:git:https://github.com/rsoika/ben.js.git</connection>
+		<developerConnection>scm:git:https://github.com/rsoika/ben.js.git</developerConnection>
+	</scm>
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/rsoika/ben.js/issues</url>
+	</issueManagement>
 </project>
