@@ -59,21 +59,6 @@
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.5.2</version>
 			</plugin>
-			<plugin>
-				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>2.7</version>
-			</plugin>
-			<!-- web site -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-				<version>3.4</version>
-				<configuration>
-					<locales>en</locales>
-					<templateDirectory>src/site</templateDirectory>
-					<template>site.vm</template>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 
