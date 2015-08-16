@@ -33,7 +33,7 @@
 
 	<div class="col-4">
           <h1>Simple</h1>        
-	<p>Ben.JS is based on an easy to learn Model-View-Controller (MVC) pattern. This pattern separates your application into logical building blocks. Take a tour through the <a href="tutorial.html">5 Minutes tutorial</a> to learn how to start with Ben.JS, or take a look on the guideline to find further information. 
+	<p>Ben.JS is based on an easy to learn Model-View-Controller (MVC) pattern. This pattern separates your application into logical building blocks. Take a tour through the <a href="tutorial.html">5 Minutes Tutorial</a> to learn how to start with Ben.JS, or take a look on the <a href="guidebook.html">guidebook</a> to find further information. 
 	</p>
 	
 	</div>
@@ -48,7 +48,7 @@
 
 	<div class="col-4">
 	<h1>Community</h1>
-	<p>Ben.JS is an open source project and we invite you to participate in it. If you  like Ben.JS, or if you have any ideas or questions, then follow us on <a href="http://github.com/rsoika/ben.js">GitHub and start contributing.</a> On the project home on Github you will find several examples and you can also checkout the source code. 
+	<p>Ben.JS is an open source project and we invite you to participate in it. If you  like Ben.JS, or if you have any ideas or questions, then follow us on <a href="http://github.com/rsoika/ben.js" target="_blank">GitHub and start contributing.</a> On the project home on Github you will find several examples and you can also checkout the source code. 
 	</p>
 	</div>
 
