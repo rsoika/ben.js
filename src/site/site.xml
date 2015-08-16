@@ -9,8 +9,8 @@
 
     <menu>
       <item name="Ben.JS" href="index.html"/>
-      <item name="Tutorial" href="tutorial.html"/>
-      <item name="Download" href="release-notes.html" />
+      <item name="Guidebook" href="guidebook.html"/>
+      <item name="Download" href="download.html" />
     </menu>
 
    

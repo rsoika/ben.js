@@ -3,9 +3,21 @@ h1 {
 }
 h2 {
 	margin-top:20px;
+	font-size: 1.7em;
 }
 h3 {
 	margin-top:10px;
+	font-size: 1.4em;
+}
+
+
+pre {
+	padding: 16px;
+    overflow: auto;
+    line-height: 1.45;
+    background-color: #f7f7f7;
+    border-radius: 3px;
+    font: 1em Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
 
 #header {
@@ -127,12 +139,3 @@ h3 {
 	padding: 10px 30px;
 }
 
-
-pre {
-	padding: 16px;
-    overflow: auto;
-    font-size: 85%;
-    line-height: 1.45;
-    background-color: #f7f7f7;
-    border-radius: 3px;
-}
