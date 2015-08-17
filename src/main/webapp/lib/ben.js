@@ -462,7 +462,10 @@ function BenTemplate(id, url) {
 	/**
 	 * loads the template content defined by the url property
 	 */
-	this.load = function(searchcontext) {
+	this.load = function(url,searchcontext) {
+		if (url) {
+			that.url=url;
+		}			
 		if (!that.url) {
 			return false;
 		}
