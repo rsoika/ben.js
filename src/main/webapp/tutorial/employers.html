@@ -1,0 +1,21 @@
+<div data-ben-controller="company-controller">
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>City</th>
+				<th>Date</th>
+			</tr>
+		</thead>
+		<tbody data-ben-foreach="employers">
+			<tr>
+				<td data-ben-model="name">
+				<td data-ben-model="city">
+				<td data-ben-model="date">
+			</tr>
+		</tbody>
+	</table>
+	<p>
+		<span data-ben-model="employers.length"></span> employers total
+	</p>
+</div>
