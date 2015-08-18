@@ -22,20 +22,11 @@ input[type="text"]:focus,input[type="password"]:focus,textarea:focus,select:focu
     background: #FDD;
 }
 
-.roll-result, .roll-number {
-    display: inline-block;
-    margin: 0.2em;
-    padding: 0.5em;
-}
 
-.roll-number {
-    font-weight: bolder;
-    min-width: 50px;
+pre {
+    padding: 16px;
+    overflow: auto;
+    background-color: #F7F7F7;
+    border-radius: 3px;
+    font: 1em Consolas,"Liberation Mono",Menlo,Courier,monospace;
 }
-
-.roll-result {
-    background: #03C;
-    color: white;
-    text-align: right;
-}
-

@@ -21,20 +21,36 @@
 
 
 		<h1>Ben.js - For-Each-Example</h1>
-		<p>Note: To run this example use a web server. Cross origin requests are only supported for protocol schemes:
-			http, data, chrome, chrome-extension, https,
-			chrome-extension-resource</p>
-
+		
 		<div class="row">
 			<div data-ben-template="my-template">Default content</div>
 
 		</div>
 
+		<div class="row">
+			<hr />
+			<p>
+				<i>Note:</i> This tutorial uses Ajax calls to load page fragments
+				into the application. If you run this example with chromium browser
+				and did not load your files form a web server this will result in a
+				'Cross origin Exception'. To avoid this during developing the
+				application locally you can start the chromium browser in a
+				developer mode with the following command:
+			</p>
+
+			<pre>
+# Linux
+chromium --allow-file-access-from-files
+# Windows
+chromium -allow-file-access-from-files
+			</pre>
+			<hr />
+		</div>
 	</div>
 
 
 	<script type="text/javascript" src="../../lib/jquery-2.1.4.min.js"></script>
-	<script type="text/javascript" src="../../lib/ben.js"></script>
+	<script type="text/javascript" src="../../ben.js"></script>
 	<script type="text/javascript" src="app.js"></script>
 </body>
 
