@@ -288,12 +288,13 @@ function BenController(id, model, view) {
 				.each(
 						function() {
 							var modelField = $(this).attr("data-ben-foreach");
+							var _prototypeClass;
 							
-							// support 'as' directive
+							// support 'as' directive and test for a prototype definition
 							if (modelField.indexOf(' as ')>-1) {
 								res = modelField.split(" ");
-								modelField=res[0];
-								_prototypeClass=res[2];
+								modelField=res[0].trim();
+								_prototypeClass=res[2].trim();
 							}
 							
 							
@@ -331,12 +332,10 @@ function BenController(id, model, view) {
 
 														if (_prototypeClass) {
 															// eval prototype
-															var evalString="model_element.prototype=new "+_prototypeClass + "();";
-															//modelValue = eval('this.model.' + modelField);
+															var evalString="model_element =new "+_prototypeClass + "(model_element);";
+															            
+															// Worklist.prototype = new ItemCollection();
 															eval(evalString);
-															if (model_element) {
-																var x=1;
-															}
 														}
 														
 														var newEntry = $
@@ -434,7 +433,7 @@ function BenController(id, model, view) {
 			if (modelField.indexOf('(') > -1) {
 				if (modelField.match("^[_a-zA-Z0-9]+\\(")) {
 					try {
-						modelValue = eval('this.model.' + modelField);
+						modelValue = eval('model.' + modelField);
 					} catch (err) {
 						console.error("Error calling gettermethod '" + modelField
 								+ "' -> " + err.message);
