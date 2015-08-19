@@ -22,7 +22,7 @@
 var Ben = function() {
 
 	console.debug('------------------------');
-	console.debug('Ben.js: Version 0.0.7');
+	console.debug('Ben.js: Version 0.0.8');
 	console.debug('------------------------');
 
 	var that = this;
@@ -288,6 +288,15 @@ function BenController(id, model, view) {
 				.each(
 						function() {
 							var modelField = $(this).attr("data-ben-foreach");
+							
+							// support 'as' directive
+							if (modelField.indexOf(' as ')>-1) {
+								res = modelField.split(" ");
+								modelField=res[0];
+								_prototypeClass=res[2];
+							}
+							
+							
 							var parent = $(this).parent('[data-ben-foreach]');
 							var foreachModel = that._extract_model_value(modelField,
 									model);
@@ -320,6 +329,16 @@ function BenController(id, model, view) {
 													function(index,
 															model_element) {
 
+														if (_prototypeClass) {
+															// eval prototype
+															var evalString="model_element.prototype=new "+_prototypeClass + "();";
+															//modelValue = eval('this.model.' + modelField);
+															eval(evalString);
+															if (model_element) {
+																var x=1;
+															}
+														}
+														
 														var newEntry = $
 																.parseHTML(forEachBlockContent);
 														// update entry index
