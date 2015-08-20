@@ -293,7 +293,7 @@ function BenController(id, model, view) {
 							
 							// support 'as' directive and test for a prototype definition
 							if (modelField.indexOf(' as ')>-1) {
-								res = modelField.split(" ");
+								var res = modelField.split(" ");
 								modelField=res[0].trim();
 								_prototypeClass=res[2].trim();
 							}
