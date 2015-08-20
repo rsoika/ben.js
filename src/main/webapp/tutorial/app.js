@@ -1,3 +1,5 @@
+"use strict";
+
 /** Model Definition **/
 function Employee(name, city, date) {
 	this.name = name;
@@ -39,7 +41,10 @@ employeeRoute.beforeRoute.add(function(f) {
 	employerContrl.model=new Employee();
 });
 
+
+
 /** Application setup **/
 $(document).ready(function() {
 	benJS.start();
+	
 });

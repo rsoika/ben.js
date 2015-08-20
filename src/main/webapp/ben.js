@@ -19,8 +19,9 @@
  * Contributors: Ralph Soika - Software Developer
  ******************************************************************************/
 
-var Ben = function() {
+"use strict";
 
+var Ben = function() {
 	console.debug('------------------------');
 	console.debug('Ben.js: Version 0.0.8');
 	console.debug('------------------------');
@@ -146,7 +147,7 @@ function BenController(id, model, view) {
 	/**
 	 * Initializes the controller
 	 */
-	this.init = function(context) {
+	this.init = function(context) {	
 		var selectorId = "[data-ben-controller='" + this.id + "']";
 		if ($(selectorId, context).length) {
 			console.debug("controller: '" + this.id + "' init...");
@@ -605,7 +606,6 @@ function BenRouter(id, config) {
  * the given controller section and updates the corresponding model value.
  */
 function _read_section(selectorId, model) {
-
 	$(selectorId).find(':input').each(function() {
 		// $(selectorId).find('[data-ben-model]').each(function() {
 
