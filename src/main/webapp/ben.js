@@ -256,28 +256,32 @@ function BenController(id, model, view) {
 		/*
 		 * test data-ben-model elements..
 		 */
-		$(selector).find('[data-ben-model]').each(
-				function() {
+		$(selector)
+				.find('[data-ben-model]')
+				.each(
+						function() {
 
-					var modelField = $(this).attr("data-ben-model");
-					// console.log("_update: checking data-ben-model=" +
-					// modelField);
+							var modelField, parentForEachBlocks, selectorForEachBlocks;
 
-					// test if parent foeach...
-					var parentForEachBlocks = $(this).closest(
-							'[data-ben-foreach]');
-					var selectorForEachBlocks = $(selector).closest(
-							'[data-ben-foreach]');
+							modelField = $(this).attr("data-ben-model");
+							// console.log("_update: checking data-ben-model=" +
+							// modelField);
 
-					if (parentForEachBlocks.length === 0
-							|| $(parentForEachBlocks).get(0) === $(
-									selectorForEachBlocks).get(0)) {
-						that._update_element(this, modelField, model);
+							// test if parent foeach...
+							parentForEachBlocks = $(this).closest(
+									'[data-ben-foreach]');
+							selectorForEachBlocks = $(selector).closest(
+									'[data-ben-foreach]');
 
-					} else {
-						// child element - do skip!
-					}
-				});
+							if (parentForEachBlocks.length === 0
+									|| $(parentForEachBlocks).get(0) === $(
+											selectorForEachBlocks).get(0)) {
+								that._update_element(this, modelField, model);
+
+							} else {
+								// child element - do skip!
+							}
+						});
 
 		/*
 		 * now test data-ben-foreach blocks with recursive call
@@ -286,25 +290,27 @@ function BenController(id, model, view) {
 				.find('[data-ben-foreach]')
 				.each(
 						function() {
-							var modelField = $(this).attr("data-ben-foreach");
-							var _prototypeClass;
+
+							var parent, modelField, foreachModel, forEachBlock, forEachBlockContent, resolveAs, _prototypeClass;
+
+							modelField = $(this).attr("data-ben-foreach");
 
 							// support 'as' directive and test for a prototype
 							// definition
 							if (modelField.indexOf(' as ') > -1) {
-								var res = modelField.split(" ");
-								modelField = res[0].trim();
-								_prototypeClass = res[2].trim();
+								resolveAs = modelField.split(" ");
+								modelField = resolveAs[0].trim();
+								_prototypeClass = resolveAs[2].trim();
 							}
 
-							var parent = $(this).parent('[data-ben-foreach]');
-							var foreachModel = that._extract_model_value(
+							parent = $(this).parent('[data-ben-foreach]');
+							foreachModel = that._extract_model_value(
 									modelField, model);
 
 							if (parent.length === 0 && foreachModel
 									&& $.isArray(foreachModel)) {
-								var forEachBlock = $(this);
-								var forEachBlockContent = forEachBlock.clone()
+								forEachBlock = $(this);
+								forEachBlockContent = forEachBlock.clone()
 										.html().trim();
 								// if content block is no valid XHTML or
 								// contains more than one child element,
@@ -329,9 +335,11 @@ function BenController(id, model, view) {
 													function(index,
 															model_element) {
 
+														var newEntry, evalString;
+
 														if (_prototypeClass) {
 															// eval prototype
-															var evalString = "model_element =new "
+															evalString = "model_element =new "
 																	+ _prototypeClass
 																	+ "(model_element);";
 
@@ -341,7 +349,7 @@ function BenController(id, model, view) {
 															eval(evalString);
 														}
 
-														var newEntry = $
+														newEntry = $
 																.parseHTML(forEachBlockContent);
 														// update entry index
 														$(newEntry)
@@ -371,16 +379,16 @@ function BenController(id, model, view) {
 	 *            modelobject
 	 */
 	this._update_element = function(selector, modelField, model) {
-		var modelAttribute;
+		var modelAttribute, attrPos, modelValue;
 		if (modelField) {
 			// extract attribute tag '::xxx::'
 			if (modelField.match("^::")) {
-				var n = modelField.indexOf("::", 2);
-				modelAttribute = modelField.substring(2, n);
-				modelField = modelField.substring(n + 2);
+				attrPos = modelField.indexOf("::", 2);
+				modelAttribute = modelField.substring(2, attrPos);
+				modelField = modelField.substring(attrPos + 2);
 			}
 
-			var modelValue = that._extract_model_value(modelField, model);
+			modelValue = that._extract_model_value(modelField, model);
 
 			// test if attribute mode
 			if (modelAttribute) {
@@ -421,10 +429,11 @@ function BenController(id, model, view) {
 	 *            modelobject
 	 */
 	this._extract_model_value = function(modelField, model) {
+		var modelValue;
+
 		if (modelField) {
 			// trim
 			modelField = modelField.trim();
-			var modelValue;
 			// check if data-ben-model is a getter method
 			if (modelField.indexOf('(') > -1) {
 				if (modelField.match("^[_a-zA-Z0-9]+\\(")) {
@@ -498,10 +507,11 @@ function BenTemplate(id, url) {
 									.load(
 											that.url,
 											function(response, status, xhr) {
-												var templateContext = $(this);
+												var template_error, templateContext = $(this);
+
 												if (status === "error") {
 													// not found!
-													var template_error = "Error loading template '"
+													template_error = "Error loading template '"
 															+ that.url
 															+ "': not found";
 													console
@@ -599,13 +609,12 @@ function BenRouter(id, config) {
  */
 function _read_section(selectorId, model) {
 	$(selectorId).find(':input').each(function() {
-		// $(selectorId).find('[data-ben-model]').each(function() {
+		var modelValue, modelField;
 
 		// check if input is a data-ben-model
-		var modelField = $(this).attr("data-ben-model");
+		modelField = $(this).attr("data-ben-model");
 		if (modelField) {
-
-			var modelValue = "";
+			modelValue = "";
 
 			// test input fields
 			switch (this.type) {
