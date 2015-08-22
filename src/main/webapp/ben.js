@@ -65,7 +65,7 @@ var Ben = function() {
 		var result;
 		// iterate over all controllers
 		$.each(that._controllers, function(index, contrl) {
-			if (contrl.id == id) {
+			if (contrl.id === id) {
 				result = contrl;
 				// break
 				return false;
@@ -85,7 +85,7 @@ var Ben = function() {
 		var result;
 		// iterate over all controllers
 		$.each(that._templates, function(index, templ) {
-			if (templ.id == id) {
+			if (templ.id === id) {
 				result = templ;
 				// break
 				return false;
@@ -103,7 +103,7 @@ var Ben = function() {
 	 */
 	this.start = function(config) {
 
-		if (config == undefined) {
+		if (config === undefined) {
 			config = {
 				"loadTemplatesOnStartup" : true
 			};
@@ -138,7 +138,7 @@ function BenController(id, model, view) {
 	this.id = id;
 	this.model = model;
 	this.view = view;
-	//this.controller = controller;
+	// this.controller = controller;
 	this.beforePush = $.Callbacks();
 	this.afterPush = $.Callbacks();
 	this.beforePull = $.Callbacks();
@@ -147,14 +147,14 @@ function BenController(id, model, view) {
 	/**
 	 * Initializes the controller
 	 */
-	this.init = function(context) {	
+	this.init = function(context) {
 		var selectorId = "[data-ben-controller='" + this.id + "']";
 		if ($(selectorId, context).length) {
 			console.debug("controller: '" + this.id + "' init...");
 			if (that.view)
 				that.load(that.view, context);
 			else
-				// no view defined just push the model! 
+				// no view defined just push the model!
 				that.push(context);
 		}
 	}
@@ -181,8 +181,6 @@ function BenController(id, model, view) {
 		that.afterPush.fire(that);
 
 	}
-
-	
 
 	/**
 	 * Pulls the model out of the view and update the model data
@@ -224,7 +222,7 @@ function BenController(id, model, view) {
 								url,
 								function(response, status, xhr) {
 
-									if (status == "error") {
+									if (status === "error") {
 										// default info
 										$(this).prepend(
 												"<!-- WARNING controller-view '"
@@ -241,7 +239,7 @@ function BenController(id, model, view) {
 					});
 		}
 	}
-	
+
 	/**
 	 * This helper method fills a given selector with a model object. Each
 	 * element with the attribute 'data-ben-model' inside the section will be
@@ -290,18 +288,18 @@ function BenController(id, model, view) {
 						function() {
 							var modelField = $(this).attr("data-ben-foreach");
 							var _prototypeClass;
-							
-							// support 'as' directive and test for a prototype definition
-							if (modelField.indexOf(' as ')>-1) {
+
+							// support 'as' directive and test for a prototype
+							// definition
+							if (modelField.indexOf(' as ') > -1) {
 								var res = modelField.split(" ");
-								modelField=res[0].trim();
-								_prototypeClass=res[2].trim();
+								modelField = res[0].trim();
+								_prototypeClass = res[2].trim();
 							}
-							
-							
+
 							var parent = $(this).parent('[data-ben-foreach]');
-							var foreachModel = that._extract_model_value(modelField,
-									model);
+							var foreachModel = that._extract_model_value(
+									modelField, model);
 
 							if (parent.length === 0 && foreachModel
 									&& $.isArray(foreachModel)) {
@@ -333,12 +331,16 @@ function BenController(id, model, view) {
 
 														if (_prototypeClass) {
 															// eval prototype
-															var evalString="model_element =new "+_prototypeClass + "(model_element);";
-															            
-															// Worklist.prototype = new ItemCollection();
+															var evalString = "model_element =new "
+																	+ _prototypeClass
+																	+ "(model_element);";
+
+															// Worklist.prototype
+															// = new
+															// ItemCollection();
 															eval(evalString);
 														}
-														
+
 														var newEntry = $
 																.parseHTML(forEachBlockContent);
 														// update entry index
@@ -347,13 +349,8 @@ function BenController(id, model, view) {
 																		"data-ben-entry",
 																		index);
 
-														var entryBlock = $(
-																forEachBlock)
-																.append(
-																		newEntry);
-
-														// that._update(bereich,
-														// model_element);
+														$(forEachBlock).append(
+																newEntry);
 														that._update(newEntry,
 																model_element);
 
@@ -365,8 +362,6 @@ function BenController(id, model, view) {
 
 	}
 
-	
-	
 	/**
 	 * This helper method fills a given element with a model object.
 	 * 
@@ -414,13 +409,11 @@ function BenController(id, model, view) {
 		}
 
 	}
-	
-	
 
 	/**
-	 * This helper method extract a given model object. The method supports getter
-	 * methods on the model and controller object. In this case the method must be
-	 * prefixed with model. or controller.
+	 * This helper method extract a given model object. The method supports
+	 * getter methods on the model and controller object. In this case the
+	 * method must be prefixed with model. or controller.
 	 * 
 	 * @param selectorID -
 	 *            jquery selector
@@ -429,6 +422,8 @@ function BenController(id, model, view) {
 	 */
 	this._extract_model_value = function(modelField, model) {
 		if (modelField) {
+			// trim
+			modelField = modelField.trim();
 			var modelValue;
 			// check if data-ben-model is a getter method
 			if (modelField.indexOf('(') > -1) {
@@ -436,8 +431,8 @@ function BenController(id, model, view) {
 					try {
 						modelValue = eval('model.' + modelField);
 					} catch (err) {
-						console.error("Error calling gettermethod '" + modelField
-								+ "' -> " + err.message);
+						console.error("Error calling gettermethod '"
+								+ modelField + "' -> " + err.message);
 					}
 				} else {
 					// invalid method call!!
@@ -449,26 +444,24 @@ function BenController(id, model, view) {
 
 				// check short-cut
 				if (modelField === '.') {
-					modelField = "model";
+					modelValue = model;
 				} else {
 					if (!modelField.match("^model.")) {
 						modelField = "model." + modelField;
 					}
+					modelValue = eval(modelField);
+					// alternative code to avoid eval
+					// modelValue = model[modelField];
 				}
-				modelValue = eval(modelField);
 			}
 
-			if ((typeof (modelValue) == "undefined"))
+			if ((typeof (modelValue) === "undefined"))
 				modelValue = "";
 
-			return modelValue;
-
+			return modelValue
 		}
-
 	}
 
-
-	
 }
 
 function BenTemplate(id, url) {
@@ -481,10 +474,10 @@ function BenTemplate(id, url) {
 	/**
 	 * loads the template content defined by the url property
 	 */
-	this.load = function(url,searchcontext) {
+	this.load = function(url, searchcontext) {
 		if (url) {
-			that.url=url;
-		}			
+			that.url = url;
+		}
 		if (!that.url) {
 			return false;
 		}
@@ -506,7 +499,7 @@ function BenTemplate(id, url) {
 											that.url,
 											function(response, status, xhr) {
 												var templateContext = $(this);
-												if (status == "error") {
+												if (status === "error") {
 													// not found!
 													var template_error = "Error loading template '"
 															+ that.url
@@ -589,7 +582,7 @@ function BenRouter(id, config) {
 		templ.afterLoad.remove(that._templateOnLoad);
 		that.templateCount--;
 
-		if (that.templateCount == 0) {
+		if (that.templateCount === 0) {
 			// update route...browser url
 			document.location.href = "#" + that.id;
 
@@ -599,7 +592,6 @@ function BenRouter(id, config) {
 		}
 	}
 }
-
 
 /**
  * this method reads all input fields with the attribute 'data-ben-model' inside
