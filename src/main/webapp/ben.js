@@ -46,6 +46,11 @@ BENJS.namespace = function(ns_string) {
 BENJS.namespace("org.benjs.core");
 
 BENJS.org.benjs.core = (function() {
+	
+	console.debug('------------------------');
+	console.debug('Ben.js: Version 0.0.9');
+	console.debug('------------------------');
+	
 
 	// private properties
 	var _controllers = new Array(), _templates = new Array(), _routes = new Array(),
@@ -157,14 +162,13 @@ BENJS.org.benjs.core = (function() {
 	 * Start the ben Application
 	 */
 	start = function(config) {
-
+		console.debug("starting application...");
+		
 		if (config === undefined) {
 			config = {
 				"loadTemplatesOnStartup" : true
 			};
 		}
-		console.debug("starting application...");
-
 		console.debug("configuration=", config);
 
 		// first load views for all registered controllers and push the
