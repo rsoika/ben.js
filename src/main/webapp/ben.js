@@ -166,34 +166,33 @@ function BenController(id, model, view) {
 	 */
 	this.push = function(context) {
 		var selectorId = "[data-ben-controller='" + this.id + "']";
-
+		var pushContext=$(selectorId, context);
+		
 		console.debug("controller: '" + that.id + "' -> push model=",
 				that.model);
 		// callback
-		that.beforePush.fire(that);
-		$(selectorId, context).each(function() {
-
-			// _update_section(this, that.model, that);
+		that.beforePush.fire(that,pushContext);
+		$(pushContext).each(function() {
 			that._update(this, that.model);
-
 		});
 		// callback
-		that.afterPush.fire(that);
-
+		that.afterPush.fire(that,pushContext);
 	}
 
 	/**
 	 * Pulls the model out of the view and update the model data
 	 */
 	this.pull = function() {
-		// callback
-		that.beforePull.fire(that, $(this));
 		var selectorId = "[data-ben-controller='" + this.id + "']";
+		var pullContext=$(selectorId);
+		
+		// callback
+		that.beforePull.fire(that, pullContext);
 		_read_section(selectorId, this.model)
 		console.debug("pull model from view '" + this.id + "': Model=",
 				this.model);
 		// callback
-		that.afterPull.fire(that, $(this));
+		that.afterPull.fire(that, pullContext);
 	}
 
 	/**
@@ -436,7 +435,7 @@ function BenController(id, model, view) {
 			modelField = modelField.trim();
 			// check if data-ben-model is a getter method
 			if (modelField.indexOf('(') > -1) {
-				if (modelField.match("^[_a-zA-Z0-9]+\\(")) {
+				if (modelField.match("^[_a-zA-Z0-9.]+\\(")) {
 					try {
 						modelValue = eval('model.' + modelField);
 					} catch (err) {
