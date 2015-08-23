@@ -5,6 +5,9 @@ function Employee(name, city, date) {
 
 }
 
+var benJS=BENJS.org.benjs.core;
+
+
 var Demo = benJS.createController("my-controller", new Employee('Anna', 'Munich',
 		'19.7.2015'));
 

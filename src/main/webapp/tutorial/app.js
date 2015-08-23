@@ -14,6 +14,8 @@ function Company() {
 	this.employers.push(new Employee('Douglas', 'Hamburg', '21.7.2015'));
 }
 
+
+var benJS=BENJS.org.benjs.core;
 /** Controller Definition **/
 var employerContrl = benJS.createController("employee-controller", new Employee());
 var companyContrl = benJS.createController("company-controller", new Company());

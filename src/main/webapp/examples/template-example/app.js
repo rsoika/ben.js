@@ -1,5 +1,3 @@
-var testWorkitemData = "{\"item\":[{\"name\":\"namlasteditor\",\"value\":[\"rsoika\"]},{\"name\":\"_subject\",\"value\":[\"Hello World\"]},{\"name\":\"type\",\"value\":[\"workitem\"]}]}";
-var testWorklistData = "{\"entity\":[{\"item\":[{\"name\":\"namlasteditor\",\"value\":[\"anna\"]},{\"name\":\"_subject\",\"value\":[\"Hello Univers\"]},{\"name\":\"type\",\"value\":[\"workitem\"]}]},{\"item\":[{\"name\":\"namlasteditor\",\"value\":[\"rsoika\"]},{\"name\":\"_subject\",\"value\":[\"Hello World\"]},{\"name\":\"type\",\"value\":[\"workitem\"]}]} ]}";
 
 function Employee(name, city, date) {
 	this.name = name;
@@ -17,6 +15,8 @@ function Company() {
 
 }
 
+
+var benJS=BENJS.org.benjs.core;
 var DemoController = benJS.createController("my-controller", new Company());
 
 var DemoTemplate = benJS.createTemplate("my-template", "view.html");

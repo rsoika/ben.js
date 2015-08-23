@@ -7,6 +7,7 @@ function Employee(name, city, date) {
 	this.date = date;
 }
 
+var benJS=BENJS.org.benjs.core;
 var DemoController = benJS.createController("my-controller", new Employee('Anna', 'Munich',
 		'19.7.2015'));
 

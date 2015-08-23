@@ -14,6 +14,7 @@ function Company() {
 
 }
 
+var benJS=BENJS.org.benjs.core;
 var Demo = benJS.createController("my-controller", new Company());
 
 $(document).ready(function() {
