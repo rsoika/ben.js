@@ -5,11 +5,12 @@ function Employee(name, city, date) {
 
 }
 
-var benJS=BENJS.org.benjs.core;
+var benJS = BENJS.org.benjs.core;
 
-
-var Demo = benJS.createController("my-controller", new Employee('Anna', 'Munich',
-		'19.7.2015'));
+var Demo = benJS.createController({
+	id : "my-controller",
+	model : new Employee('Anna', 'Munich', '19.7.2015')
+});
 
 $(document).ready(function() {
 	benJS.start();

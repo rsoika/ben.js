@@ -1,6 +1,6 @@
 "use strict";
 
-/** Model Definition **/
+/** Model Definition * */
 function Employee(name, city, date) {
 	this.name = name;
 	this.city = city;
@@ -14,12 +14,17 @@ function Company() {
 	this.employers.push(new Employee('Douglas', 'Hamburg', '21.7.2015'));
 }
 
+var benJS = BENJS.org.benjs.core;
+/** Controller Definition * */
+var employerContrl = benJS.createController({
+	id : "employee-controller",
+	model : new Employee()
+});
 
-var benJS=BENJS.org.benjs.core;
-/** Controller Definition **/
-var employerContrl = benJS.createController("employee-controller", new Employee());
-var companyContrl = benJS.createController("company-controller", new Company());
-
+var companyContrl = benJS.createController({
+	id : "company-controller",
+	model : new Company()
+});
 
 employerContrl.save = function(f) {
 	// load the form data
@@ -30,23 +35,25 @@ employerContrl.save = function(f) {
 	contentTemplate.load("employers.html");
 }
 
-
-
-/** Template Definition **/
-var contentTemplate = benJS.createTemplate("app-content", "employers.html");
-
-/** Router Definition **/
-var employeeRoute = benJS.createRoute('employee-route', {
-	"app-content" : "employee.html"
-});
-employeeRoute.beforeRoute.add(function(f) {
-	employerContrl.model=new Employee();
+/** Template Definition * */
+var contentTemplate = benJS.createTemplate({
+	id : "app-content",
+	url : "employers.html"
 });
 
+/** Router Definition * */
+var employeeRoute = benJS.createRoute({
+	id : "employee-route",
+	templates : {
+		"app-content" : "employee.html"
+	},
+	beforeRoute : function(f) {
+		employerContrl.model = new Employee();
+	}
+});
 
-
-/** Application setup **/
+/** Application setup * */
 $(document).ready(function() {
 	benJS.start();
-	
+
 });

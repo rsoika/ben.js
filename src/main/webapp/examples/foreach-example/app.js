@@ -13,8 +13,11 @@ function Company() {
 
 }
 
-var benJS=BENJS.org.benjs.core;
-var Demo = benJS.createController("my-controller", new Company());
+var benJS = BENJS.org.benjs.core;
+var Demo = benJS.createController({
+	id : "my-controller",
+	model : new Company()
+});
 
 $(document).ready(function() {
 	benJS.start();

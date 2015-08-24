@@ -19,9 +19,13 @@ function Company() {
 
 var benJS=BENJS.org.benjs.core;
 
-var DemoController = benJS.createController("my-controller", new Company(),"view.html");
+var DemoController = benJS.createController({
+	id: "my-controller", 
+	model: new Company(),
+	view:"view.html"
+});
 
-var DemoTemplate = benJS.createTemplate("my-template", "template.html");
+var DemoTemplate = benJS.createTemplate({id:"my-template", url:"template.html"});
 
 
 $(document).ready(function() {

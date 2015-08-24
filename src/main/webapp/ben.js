@@ -56,27 +56,59 @@ BENJS.org.benjs.core = (function() {
 	var _controllers = new Array(), _templates = new Array(), _routes = new Array(),
 
 	// private methods
-	createController = function(id, model, view) {
-		console.debug('register new controller: \'' + id + '\'');
-		var aController = new BenController(id, model, view);
+	createController = function(settings) {
+		
+		// Force options to be an object
+		settings = settings || {};
+		
+		if (!settings.id) {
+			console.error("createController wrong settings provided: id missing!");
+			return false;
+		}
+		
+		console.debug('register new controller: \'' + settings.id + '\'');
+		var aController = new BenController(settings);
 		_controllers.push(aController);
+	
 		return aController;
 	},
 
-	createTemplate = function(id, url) {
-		console.debug("register new template: '" + id + "' view='" + url + "'");
+	createTemplate = function(settings) {
+		
+		// Force options to be an object
+		settings = settings || {};
+		
+		if (!settings.id) {
+			console.error("createTemplate wrong settings provided: id missing!");
+			return false;
+		}
+		
+		if (!settings.url) {
+			console.error("createTemplate wrong settings provided: url missing!");
+			return false;
+		}
+		
+		console.debug("register new template: '" + settings.id + "' view='" + settings.url + "'");
 
-		var aTemplate = new BenTemplate(id, url);
+		var aTemplate = new BenTemplate(settings);
 		_templates.push(aTemplate);
 
 		return aTemplate;
 
 	},
 
-	createRoute = function(url, controllers) {
-		console.debug('register new route: \'' + url + '\'');
+	createRoute = function(settings) {
+		// Force options to be an object
+		settings = settings || {};
+		
+		if (!settings.id) {
+			console.error("createController wrong settings provided: id missing!");
+			return false;
+		}
+		
+		console.debug('register new route: \'' + settings.id + '\'');
 
-		var aRoute = new BenRouter(url, controllers);
+		var aRoute = new BenRouter(settings);
 		_routes.push(aRoute);
 
 		return aRoute;
@@ -186,16 +218,42 @@ BENJS.org.benjs.core = (function() {
 		}
 	},
 
-	BenController = function(id, model, view) {
+	
+	/**
+	 * Controller object
+	 * 
+	 * @param: settings Type: PlainObject
+	 */
+	BenController = function(settings) {
+		
+		// Force options to be an object
+		settings = settings || {};
+		
+		
 		var that = this;
-		this.id = id;
-		this.model = model;
-		this.view = view;
+		this.id = settings.id;
+		this.model = settings.model;
+		this.view = settings.view;
 		// this.controller = controller;
 		this.beforePush = $.Callbacks();
 		this.afterPush = $.Callbacks();
 		this.beforePull = $.Callbacks();
 		this.afterPull = $.Callbacks();
+		
+		
+		// test callback method
+		if (typeof settings.beforePush === "function") {
+			this.beforePush.add(settings.beforePush);
+		}
+		if (typeof settings.afterPush === "function") {
+			this.afterPush.add(settings.afterPush);
+		}
+		if (typeof settings.beforePull === "function") {
+			this.beforePull.add(settings.beforePull);
+		}
+		if (typeof settings.afterPull === "function") {
+			this.afterPull.add(settings.afterPull);
+		}
 
 		/**
 		 * Initializes the controller
@@ -543,13 +601,25 @@ BENJS.org.benjs.core = (function() {
 
 	},
 
-	BenTemplate = function(id, url) {
+	BenTemplate = function(settings) {
+		
+		// Force options to be an object
+		settings = settings || {};
+		
 		var that = this;
-		this.id = id;
-		this.url = url;
+		this.id = settings.id;
+		this.url = settings.url;
 		this.beforeLoad = $.Callbacks();
 		this.afterLoad = $.Callbacks();
 
+		// test callback method
+		if (typeof settings.beforeLoad === "function") {
+			this.beforeLoad.add(settings.beforeLoad);
+		}
+		if (typeof settings.afterLoad === "function") {
+			this.afterLoad.add(settings.afterLoad);
+		}
+			
 		/**
 		 * loads the template content defined by the url property
 		 */
@@ -626,14 +696,28 @@ BENJS.org.benjs.core = (function() {
 		}
 	},
 
-	BenRouter = function(id, config) {
+	BenRouter = function(settings) {
+		
+		// Force options to be an object
+		settings = settings || {};
+		
 		var that = this;
-		this.id = id;
-		this.config = config;
+		this.id = settings.id;
+		this.templates = settings.templates;
+		
 		this.beforeRoute = $.Callbacks();
 		this.afterRoute = $.Callbacks();
 		this.templateCount = 0;
 
+		
+		// test callback method
+		if (typeof settings.beforeRoute === "function") {
+			this.beforeRoute.add(settings.beforeRoute);
+		}
+		if (typeof settings.afterRoute === "function") {
+			this.afterRoute.add(settings.afterRoute);
+		}
+		
 		/**
 		 * calls a route.....
 		 */
@@ -642,12 +726,12 @@ BENJS.org.benjs.core = (function() {
 			that.beforeRoute.fire(that);
 
 			// load templates
-			var keys = Object.keys(that.config);
+			var keys = Object.keys(that.templates);
 
 			$.each(keys, function(index, templID) {
 				var templ = benJS.findTemplateByID(templID);
 				if (templ) {
-					templ.url = that.config[templID];
+					templ.url = that.templates[templID];
 					templ.afterLoad.add(that._templateOnLoad);
 					that.templateCount++;
 					templ.load();
