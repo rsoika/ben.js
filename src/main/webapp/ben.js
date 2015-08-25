@@ -237,10 +237,12 @@ BENJS.org.benjs.core = (function() {
 		this.id = settings.id;
 		this.model = settings.model;
 		this.view = settings.view;
-		this.autoRefresh = settings.autoRefresh;
-		if (typeof autoRefresh == "undefined") {
+		if (typeof settings.autoRefresh == "undefined") {
 			this.autoRefresh = true;
+		} else {
+			this.autoRefresh = settings.autoRefresh;
 		}
+		console.info("Autorefres="+this.autoRefresh)
 
 		this.beforePush = $.Callbacks();
 		this.afterPush = $.Callbacks();
