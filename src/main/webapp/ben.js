@@ -242,7 +242,7 @@ BENJS.org.benjs.core = (function() {
 		} else {
 			this.autoRefresh = settings.autoRefresh;
 		}
-		console.info("Autorefres="+this.autoRefresh)
+		
 
 		this.beforePush = $.Callbacks();
 		this.afterPush = $.Callbacks();
@@ -531,7 +531,7 @@ BENJS.org.benjs.core = (function() {
 				} else
 				// test for normal element
 				if (!selector.type && $(selector).text) {
-					$(selector).text(modelValue);
+					$(selector).html(modelValue);
 				} else {
 					// test input fields
 					switch (selector.type) {
