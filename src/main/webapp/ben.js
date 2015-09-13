@@ -323,7 +323,7 @@ BENJS.org.benjs.core = (function() {
 		this.load = function(url, searchcontext) {
 			// reset foreach cache
 			this.foreachCache = new Array();
-			
+
 			if (!url) {
 				// test view
 				if (that.view) {
@@ -464,30 +464,29 @@ BENJS.org.benjs.core = (function() {
 
 									// test if content block was cached before?
 									if (foreachID) {
-										if (foreachID>=that.foreachCache.length) {
+										if (foreachID >= that.foreachCache.length) {
 											console
-											.debug('WARNING - wrong foreachCach length!');
+													.debug('WARNING - wrong foreachCach length!');
 										}
 										forEachBlockContent = that.foreachCache[foreachID];
 									}
 									if (!forEachBlockContent) {
 										// not yet cached
-										console
-												.debug('caching foreach block: '+foreachID);
+										console.debug('caching foreach block: '
+												+ foreachID);
 										forEachBlockContent = forEachBlock
 												.clone().html().trim();
-										that.foreachCache[foreachID]=forEachBlockContent;
-										
+										that.foreachCache[foreachID] = forEachBlockContent;
+
 									}
-									
+
 									// if content block is no valid XHTML or
 									// contains more than one child element,
 									// surround content with a span to define a
 									// valid xhtml element
 									if (forEachBlockContent.indexOf('<') != 0
 											|| forEachBlockContent
-													.indexOf('<!--') === 0
-											|| $(this).children().length > 1) {
+													.indexOf('<!--') === 0) {
 										forEachBlockContent = '<span data-ben-entry="">'
 												+ forEachBlockContent
 												+ '</span>';
