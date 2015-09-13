@@ -48,7 +48,7 @@ BENJS.namespace("org.benjs.core");
 BENJS.org.benjs.core = (function() {
 
 	console.debug('------------------------');
-	console.debug('Ben.js: Version 0.0.9');
+	console.debug('Ben.js: Version 0.1.0');
 	console.debug('------------------------');
 
 	// private properties
@@ -242,7 +242,8 @@ BENJS.org.benjs.core = (function() {
 		} else {
 			this.autoRefresh = settings.autoRefresh;
 		}
-		
+
+		this.foreachCache = new Array();
 
 		this.beforePush = $.Callbacks();
 		this.afterPush = $.Callbacks();
@@ -267,6 +268,7 @@ BENJS.org.benjs.core = (function() {
 		 * Initializes the controller
 		 */
 		this.init = function(context) {
+			this.foreachCache = new Array();
 			var selectorId = "[data-ben-controller='" + this.id + "']";
 			if ($(selectorId, context).length) {
 				console.debug("controller: '" + this.id + "' init...");
@@ -319,6 +321,9 @@ BENJS.org.benjs.core = (function() {
 		 * defaults to id+'.html'
 		 */
 		this.load = function(url, searchcontext) {
+			// reset foreach cache
+			this.foreachCache = new Array();
+			
 			if (!url) {
 				// test view
 				if (that.view) {
@@ -364,18 +369,37 @@ BENJS.org.benjs.core = (function() {
 		}
 
 		/**
-		 * This helper method fills a given selector with a model object. Each
-		 * element with the attribute 'data-ben-model' inside the section will
-		 * be filled with the corresponding model value. If no model value
-		 * exists the element will be cleared. In case the element is a child of
-		 * a data-ben-foreach block the new elements will be created for each
-		 * entry in the model object. The method makes a recursive call to
-		 * itself.
+		 * This helper method fills a given controller selector with model
+		 * objects. Each element with the attribute 'data-ben-model' inside the
+		 * section will be filled with the corresponding model value. If no
+		 * model value exists the element will be cleared.
 		 * 
+		 * If the selector contains a data-ben-foreach block the method creates
+		 * a separate block for each element of the corresponding data array in
+		 * the model. The method makes a recursive call to itself.
+		 * 
+		 * To refresh a foreach block later with a new push() method call, the
+		 * method caches the origin HTML foreach-template of each
+		 * data-ben-foreach block. To identify the block the method adds a
+		 * data-ben-foreach-id to every foreach block.
 		 * 
 		 */
 		this._update = function(selector, model) {
-			// console.log('_update starting...');
+
+			/*
+			 * First check foreach blocks without an id
+			 */
+			$(selector).find('[data-ben-foreach]').each(function() {
+				var forEachBlock, forEachBlockContent, foreachID;
+				foreachID = $(this).attr("data-ben-foreach-id");
+				if (!foreachID) {
+					// add a id
+					foreachID = that.foreachCache.length;
+					$(this).attr("data-ben-foreach-id", foreachID);
+					// add empty bock into the cache
+					that.foreachCache.push("");
+				}
+			});
 
 			/*
 			 * test data-ben-model elements..
@@ -417,13 +441,13 @@ BENJS.org.benjs.core = (function() {
 					.each(
 							function() {
 
-								var parent, modelField, foreachModel, forEachBlock, forEachBlockContent, resolveAs, _prototypeClass;
+								var parent, modelField, foreachID, foreachModel, forEachBlock, forEachBlockContent, resolveAs, _prototypeClass;
 
 								modelField = $(this).attr("data-ben-foreach");
+								foreachID = $(this).attr("data-ben-foreach-id");
 
 								// support 'as' directive and test for a
-								// prototype
-								// definition
+								// prototype definition
 								if (modelField.indexOf(' as ') > -1) {
 									resolveAs = modelField.split(" ");
 									modelField = resolveAs[0].trim();
@@ -437,8 +461,25 @@ BENJS.org.benjs.core = (function() {
 								if (parent.length === 0 && foreachModel
 										&& $.isArray(foreachModel)) {
 									forEachBlock = $(this);
-									forEachBlockContent = forEachBlock.clone()
-											.html().trim();
+
+									// test if content block was cached before?
+									if (foreachID) {
+										if (foreachID>=that.foreachCache.length) {
+											console
+											.debug('WARNING - wrong foreachCach length!');
+										}
+										forEachBlockContent = that.foreachCache[foreachID];
+									}
+									if (!forEachBlockContent) {
+										// not yet cached
+										console
+												.debug('caching foreach block: '+foreachID);
+										forEachBlockContent = forEachBlock
+												.clone().html().trim();
+										that.foreachCache[foreachID]=forEachBlockContent;
+										
+									}
+									
 									// if content block is no valid XHTML or
 									// contains more than one child element,
 									// surround content with a span to define a
@@ -609,7 +650,6 @@ BENJS.org.benjs.core = (function() {
 
 	},
 
-	
 	/**
 	 * Template object
 	 * 
@@ -642,9 +682,6 @@ BENJS.org.benjs.core = (function() {
 		 * 
 		 * @param url -
 		 *            optional url defining the content which will be loaded
-		 * @param autorefresh -
-		 *            indidcates if contollers will be refreshed after load
-		 *            finished (default=true)
 		 */
 		this.load = function(url) {
 			if (url) {
@@ -723,7 +760,6 @@ BENJS.org.benjs.core = (function() {
 		}
 	},
 
-	
 	/**
 	 * Router object
 	 * 

@@ -18,7 +18,7 @@ function Company() {
 }
 
 var benJS = BENJS.org.benjs.core;
-var Demo = benJS.createController({
+var demoController = benJS.createController({
 	id : "my-controller",
 	model : new Company()
 });
