@@ -390,7 +390,7 @@ BENJS.org.benjs.core = (function() {
 			 * First check foreach blocks without an id
 			 */
 			$(selector).find('[data-ben-foreach]').each(function() {
-				var forEachBlock, forEachBlockContent, foreachID;
+				var foreachID;
 				foreachID = $(this).attr("data-ben-foreach-id");
 				if (!foreachID) {
 					// add a id
