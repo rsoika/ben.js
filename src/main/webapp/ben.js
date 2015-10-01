@@ -156,11 +156,12 @@ BENJS.org.benjs.core = (function() {
 	/**
 	 * this method reads all input fields with the attribute 'data-ben-model'
 	 * inside the given controller section and updates the corresponding model
-	 * value.
+	 * value. In case of a getter method the method calls the corresponding 
+	 * setter method
 	 */
 	_read_section = function(selectorId, model) {
 		$(selectorId).find(':input').each(function() {
-			var modelValue, modelField;
+			var modelValue, modelField, methodName;
 
 			// check if input is a data-ben-model
 			modelField = $(this).attr("data-ben-model");
@@ -182,27 +183,24 @@ BENJS.org.benjs.core = (function() {
 				case 'radio':
 					this.checked = false;
 				}
-
 				// check if data-ben-model is a getter method
-				if (modelField.indexOf('(') > -1) {
-					if (modelField.match("^get[_a-zA-Z0-9.]+\\(")) {
-						try {
-							// convert get in set
-							modelField="set"+modelField.substring(3,modelField.length-1);
+				if (modelField.match("^get[_a-zA-Z0-9.]+\\(")) {
+					try {
+						// convert get in set
+						modelField="set"+modelField.substring(3,modelField.length-1);
+						// test if setter method is defined
+						methodName=modelField.substring(0,modelField.indexOf('('));
+						if ($.isFunction(model[methodName])) {
 							modelField=modelField+",modelValue)";
 							eval('model.' + modelField);
-						} catch (err) {
-							console.error("Error calling settermethod '"
-									+ modelField + "' -> " + err.message);
 						}
-					} else {
-						model[modelField] = modelValue;
+					} catch (err) {
+						console.error("Error calling setter-method '"
+								+ modelField + "' -> " + err.message);
 					}
+				} else {
+					model[modelField] = modelValue;
 				}
-				
-			
-				
-
 			}
 		});
 
@@ -624,7 +622,7 @@ BENJS.org.benjs.core = (function() {
 		 *            modelobject
 		 */
 		this._extract_model_value = function(modelField, model) {
-			var modelValue;
+			var modelValue, methodName;
 
 			if (modelField) {
 				// trim
@@ -633,7 +631,13 @@ BENJS.org.benjs.core = (function() {
 				if (modelField.indexOf('(') > -1) {
 					if (modelField.match("^[_a-zA-Z0-9.]+\\(")) {
 						try {
-							modelValue = eval('model.' + modelField);
+							// test if method is defined
+							methodName=modelField.substring(0,modelField.indexOf('('));
+							if ($.isFunction(model[methodName])) {
+								modelValue = eval('model.' + modelField);
+							} else {
+								console.error("Error invalid getter method: "+ modelField );
+							}
 						} catch (err) {
 							console.error("Error calling gettermethod '"
 									+ modelField + "' -> " + err.message);
