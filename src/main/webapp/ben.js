@@ -165,8 +165,9 @@ BENJS.org.benjs.core = (function() {
 			// check if input is a data-ben-model
 			modelField = $(this).attr("data-ben-model");
 			if (modelField) {
+				modelField = modelField.trim();
 				modelValue = "";
-
+				
 				// test input fields
 				switch (this.type) {
 				case 'text':
@@ -176,12 +177,31 @@ BENJS.org.benjs.core = (function() {
 				case 'select-one':
 				case 'textarea':
 					modelValue = $(this).val();
-					model[modelField] = modelValue;
 					break;
 				case 'checkbox':
 				case 'radio':
 					this.checked = false;
 				}
+
+				// check if data-ben-model is a getter method
+				if (modelField.indexOf('(') > -1) {
+					if (modelField.match("^get[_a-zA-Z0-9.]+\\(")) {
+						try {
+							// convert get in set
+							modelField="set"+modelField.substring(3,modelField.length-1);
+							modelField=modelField+",modelValue)";
+							eval('model.' + modelField);
+						} catch (err) {
+							console.error("Error calling settermethod '"
+									+ modelField + "' -> " + err.message);
+						}
+					} else {
+						model[modelField] = modelValue;
+					}
+				}
+				
+			
+				
 
 			}
 		});
