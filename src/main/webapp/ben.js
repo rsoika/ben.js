@@ -826,7 +826,7 @@ BENJS.org.benjs.core = (function() {
 			var keys = Object.keys(that.templates);
 
 			$.each(keys, function(index, templID) {
-				var templ = benJS.findTemplateByID(templID);
+				var templ = BENJS.org.benjs.core.findTemplateByID(templID);
 				if (templ) {
 					that.templateCount++;
 					templ.afterLoad.add(that._templateOnLoad);
