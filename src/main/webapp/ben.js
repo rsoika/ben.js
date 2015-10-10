@@ -193,6 +193,8 @@ BENJS.org.benjs.core = (function() {
 						if ($.isFunction(model[methodName])) {
 							modelField=modelField+",modelValue)";
 							eval('model.' + modelField);
+						} else {
+							console.warn("setter method '" + methodName + "' is not defined!");
 						}
 					} catch (err) {
 						console.error("Error calling setter-method '"
