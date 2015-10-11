@@ -48,7 +48,7 @@ BENJS.namespace("org.benjs.core");
 BENJS.org.benjs.core = (function() {
 
 	console.debug('------------------------');
-	console.debug('Ben.js: Version 0.2.0');
+	console.debug('Ben.js: Version 0.3.0');
 	console.debug('------------------------');
 
 	// private properties
