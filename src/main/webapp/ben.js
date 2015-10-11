@@ -463,8 +463,7 @@ BENJS.org.benjs.core = (function() {
 
 								var parent, modelField, foreachID, foreachModel, forEachBlock, 
 									forEachBlockContent, resolveAs, 
-									_prototypeClass,
-									_validXHTML;
+									_prototypeClass;
 
 								modelField = $(this).attr("data-ben-foreach");
 								foreachID = $(this).attr("data-ben-foreach-id");
