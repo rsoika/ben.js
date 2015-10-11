@@ -461,7 +461,10 @@ BENJS.org.benjs.core = (function() {
 					.each(
 							function() {
 
-								var parent, modelField, foreachID, foreachModel, forEachBlock, forEachBlockContent, resolveAs, _prototypeClass;
+								var parent, modelField, foreachID, foreachModel, forEachBlock, 
+									forEachBlockContent, resolveAs, 
+									_prototypeClass,
+									_validXHTML;
 
 								modelField = $(this).attr("data-ben-foreach");
 								foreachID = $(this).attr("data-ben-foreach-id");
@@ -496,20 +499,20 @@ BENJS.org.benjs.core = (function() {
 												+ foreachID);
 										forEachBlockContent = forEachBlock
 												.clone().html().trim();
-										that.foreachCache[foreachID] = forEachBlockContent;
-
-									}
-
-									// if content block is no valid XHTML or
-									// contains more than one child element,
-									// surround content with a span to define a
-									// valid xhtml element
-									if (forEachBlockContent.indexOf('<') != 0
-											|| forEachBlockContent
-													.indexOf('<!--') === 0) {
-										forEachBlockContent = '<span data-ben-entry="">'
+										
+										// if content block did not start with < or
+										// is no valid XHTML we surround the content 
+										// with a span to define a valid xhtml element
+										// we use the $().html() method to validate XHTML
+										if (forEachBlockContent.indexOf('<') != 0
+											||
+											!$(forEachBlockContent).html()) {
+											forEachBlockContent = '<span>'
 												+ forEachBlockContent
 												+ '</span>';
+										}		
+										// cach foreach content block now
+										that.foreachCache[foreachID] = forEachBlockContent;
 									}
 
 									// remove the content which was
@@ -638,7 +641,7 @@ BENJS.org.benjs.core = (function() {
 							if ($.isFunction(model[methodName])) {
 								modelValue = eval('model.' + modelField);
 							} else {
-								console.error("Error invalid getter method: "+ modelField );
+								// no op - we just return an empty value
 							}
 						} catch (err) {
 							console.error("Error calling gettermethod '"
