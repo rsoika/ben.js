@@ -52,7 +52,7 @@ BENJS.org.benjs.core = (function() {
 	console.debug('------------------------');
 
 	// private properties
-	var _controllers = new Array(), _templates = new Array(), _routes = new Array(),
+	var _appVersion='', _controllers = new Array(), _templates = new Array(), _routes = new Array(),
 
 	// private methods
 	createController = function(settings) {
@@ -208,18 +208,41 @@ BENJS.org.benjs.core = (function() {
 
 	},
 
+	
+	/*
+	 * helper method adds a version number to an url. Used by $.load() 
+	 */
+	_addAppVersion = function(url) {
+		if (_appVersion) {
+			if (url.indexOf('?')>-1) {
+				url=url+'&appVersion='+_appVersion;
+			} else {
+				url=url+'?appVersion='+_appVersion;
+			}
+		}
+		return url;
+	},
+	
 	/**
 	 * Start the ben Application
 	 */
 	start = function(config) {
 		console.debug("starting application...");
 
+		// set default settings
 		if (config === undefined) {
-			config = {
-				"loadTemplatesOnStartup" : true
-			};
+			config = {};
 		}
+		if (config.loadTemplatesOnStartup === undefined) {
+			config.loadTemplatesOnStartup=true;
+		}
+		if (config.appVersion === undefined) {
+			config.appVersion="";
+		}
+			
 		console.debug("configuration=", config);
+		_appVersion=config.appVersion;
+		
 
 		// first load views for all registered controllers and push the
 		// model....
@@ -288,6 +311,7 @@ BENJS.org.benjs.core = (function() {
 		 * Initializes the controller
 		 */
 		this.init = function(context) {
+				
 			this.foreachCache = new Array();
 			var selectorId = "[data-ben-controller='" + this.id + "']";
 			if ($(selectorId, context).length) {
@@ -351,9 +375,10 @@ BENJS.org.benjs.core = (function() {
 				}
 			}
 			if (url) {
+				
 				var selectorId = "[data-ben-controller='" + this.id + "']";
 
-				// document.body
+				url=_addAppVersion(url);
 
 				$(selectorId, searchcontext)
 						.each(
@@ -722,7 +747,8 @@ BENJS.org.benjs.core = (function() {
 
 			var selectorId = "[data-ben-template='" + that.id + "']";
 
-			// document.body
+			
+			that.url=_addAppVersion(that.url);
 
 			$(selectorId)
 					.each(

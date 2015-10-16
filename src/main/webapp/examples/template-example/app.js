@@ -25,5 +25,7 @@ var DemoTemplate = benJS.createTemplate({
 });
 
 $(document).ready(function() {
-	benJS.start();
+	benJS.start({
+		appVersion : "1.0.0"
+	});
 });
