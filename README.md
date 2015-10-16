@@ -17,6 +17,7 @@ Ben.JS is based on jQuery. To setup Ben.JS at least the latest jQuery version ne
     	   .....
     	   <script>
     	      $(document).ready(function() {
+    	      	var benJS=BENJS.org.benjs.core;
 				 benJS.start();
 			  });
 			</script>
