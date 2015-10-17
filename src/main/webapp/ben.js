@@ -502,6 +502,31 @@ BENJS.org.benjs.core = (function() {
 		this._update = function(selector, model) {
 
 			/*
+			 * test data-ben-model elements..
+			 */
+			$(selector).find('[data-ben-render]').each(
+				function() {
+					var modelField, parentForEachBlocks, selectorForEachBlocks;
+					modelField = $(this).attr("data-ben-render");
+					// test if parent foeach...
+					parentForEachBlocks = $(this).closest(
+							'[data-ben-foreach]');
+					selectorForEachBlocks = $(selector).closest(
+							'[data-ben-foreach]');
+
+					if (parentForEachBlocks.length === 0
+							|| $(parentForEachBlocks).get(0) === $(
+									selectorForEachBlocks).get(0)) {
+						// show/hide element...
+						that._render_element(this, modelField, model);
+					} else {
+						// child element - do skip!
+					}
+					
+				}
+			);
+			
+			/*
 			 * First check foreach blocks without an id
 			 */
 			$(selector).find('[data-ben-foreach]').each(function() {
@@ -694,6 +719,29 @@ BENJS.org.benjs.core = (function() {
 
 			}
 
+		}
+		
+		
+		
+		/**
+		 * This helper method hides a given element if the corresponding 
+		 * model object results in false.
+		 * 
+		 * @param selectorID -
+		 *            jquery selector
+		 * @param model -
+		 *            modelobject
+		 */
+		this._render_element = function(selector, modelField, model) {
+			var modelAttribute, attrPos, modelValue;
+			if (modelField) {
+				modelValue = that._extract_model_value(modelField, model);
+				if ( modelValue) {
+					$(selector).show();
+				} else {
+					$(selector).hide();
+				}
+			}
 		}
 
 		/**

@@ -13,7 +13,6 @@
 html, body { color: #2B2B2D;font-family: Helvetica, Arial, Geneva,sans-serif; font-size: 1em; line-height: 1.5; background: none repeat scroll 0 0 #fff; min-height: 100%; width: 100% !important;}
 
 #header, header, #footer1, #footer2 {min-height: 50px; padding: 10px; width: 100%;}  
-#header {background-color: #333;color: #fff;  font-size: 2.33333em; font-weight: 200;}  
 #footer1 {background-color: #333;color: #fff;}
 #footer2 {background-color: #ddd;color: #888;}
 #container {  padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto;}
@@ -56,7 +55,7 @@ code {background-color: #31708f; color: #fff; font-size: 90%; padding: 2px 4px; 
 
 button, input, textarea, .button, a.button, select {color: #333; border: 1px solid #ddd; border-radius: 4px; height: auto; width: auto; line-height: 1.5em; padding: 0.25em 0.25em; text-decoration: none;}
 button, .button, a.button {padding: 0.25em 1em;cursor: pointer;color: #ddd; text-align: center; font-weight: 700;background-color: #888;}
-select {line-height: 1em; padding: 0;background: transparent;}
+select {background: transparent;}
 
 table, tr {border-bottom: 1px solid #ddd;}
 table, td, th { padding: 4px;}

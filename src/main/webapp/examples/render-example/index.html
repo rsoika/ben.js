@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Ben.js Demo</title>
+
+
+<link href="../../css/creatix-basic.css" rel="stylesheet" />
+<link href="../../css/creatix-forms.css" rel="stylesheet" />
+<link href="../../css/creatix-layout.css" rel="stylesheet" />
+<link href="../../css/custom.css" rel="stylesheet" />
+
+
+</head>
+
+<body>
+
+
+	<div id="container">
+
+
+		<h1>Ben.js - Render-Example</h1>
+
+
+		<p>This example uses 'data-ben-render' to render html snippets depending on model
+			attributes or model functions. <br />Select the department 'Development'...</p>
+		<div class="row">
+			<div data-ben-controller="my-controller">
+				<h3>Form:</h3>
+				<dl>
+					<dt>Name</dt>
+					<dd>
+						<input type="text" data-ben-model="name" />
+					</dd>
+
+					<dt>Department</dt>
+					<dd>
+
+						<select data-ben-model="department" onchange="myController.refresh()">
+							<option>Development</option>
+							<option>Marketing</option>
+							<option>Finance</option>
+						</select>
+
+
+					</dd>
+
+
+				</dl>
+
+				<!-- development section -->
+				<div data-ben-render="isDeveloper()">
+					<h4>Specialism:</h4>
+					<select data-ben-model="specialism">
+						<option>Java</option>
+						<option>JavaScript</option>
+						<option>SQL</option>
+					</select>
+				</div>
+
+
+				<input type="button" value="Pull Data" onclick="myController.pull()"
+					class="btn" />
+
+
+			</div>
+
+		</div>
+	</div>
+
+
+
+
+	<script type="text/javascript" src="../../lib/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="../../ben.js"></script>
+	<script type="text/javascript" src="app.js"></script>
+</body>
+
+</html>
