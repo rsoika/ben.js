@@ -608,40 +608,29 @@ BENJS.org.benjs.core = (function() {
 										// copy the content of the
 										// data-ben-foreach
 										// block
-										$
-												.each(
-														foreachModel,
-														function(index,
-																model_element) {
+										$.each(
+											foreachModel,
+											function(index, model_element) {
+												var newEntry; //, evalString;
+												if (_prototypeClass) {
+													// we avoid eval call here
+													// evalString = "model_element =new " + _prototypeClass + "(model_element);";
+													//	eval(evalString);																
+													model_element=_createObjectByName(_prototypeClass,model_element);
+												}
 
-															var newEntry; //, evalString;
+												newEntry = $
+														.parseHTML(forEachBlockContent);
+												// update entry
+												// index
+												$(newEntry).attr(
+																"data-ben-entry",
+																index);
 
-															if (_prototypeClass) {
+												$(forEachBlock).append(newEntry);
+												that._update(newEntry,model_element);
 
-																// we avoid eval call here
-																// evalString = "model_element =new " + _prototypeClass + "(model_element);";
-																//	eval(evalString);																
-																model_element=_createObjectByName(_prototypeClass,model_element);
-															}
-
-															newEntry = $
-																	.parseHTML(forEachBlockContent);
-															// update entry
-															// index
-															$(newEntry)
-																	.attr(
-																			"data-ben-entry",
-																			index);
-
-															$(forEachBlock)
-																	.append(
-																			newEntry);
-															that
-																	._update(
-																			newEntry,
-																			model_element);
-
-														});
+											});
 									}
 								}
 
