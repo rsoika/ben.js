@@ -263,10 +263,27 @@ BENJS.org.benjs.core = (function() {
 		fn = context[methodName];
 		// is valid function?
 		if (typeof fn === "function") {
-			return fn.apply(null, fnparams);
+			// null
+			return fn.apply(context, fnparams);
 		}
 	},
 
+	/*
+	 * Helper method to create a new object by a object name. The method
+	 * accepts a initial parameter which is in this case always the current model element
+	 */
+	_createObjectByName = function(_prototypeClass,param) {
+		var context,namespaces,func,i;		
+		context=window;
+		namespaces = _prototypeClass.split(".");
+		func = namespaces.pop();
+		for(i = 0; i < namespaces.length; i++) {
+		    context = context[namespaces[i]];
+		}
+		return new context[func](param);
+	},
+	
+	
 	/**
 	 * Start the ben Application
 	 */
@@ -597,19 +614,14 @@ BENJS.org.benjs.core = (function() {
 														function(index,
 																model_element) {
 
-															var newEntry, evalString;
+															var newEntry; //, evalString;
 
 															if (_prototypeClass) {
-																// eval
-																// prototype
-																evalString = "model_element =new "
-																		+ _prototypeClass
-																		+ "(model_element);";
 
-																// Worklist.prototype
-																// = new
-																// ItemCollection();
-																eval(evalString);
+																// we avoid eval call here
+																// evalString = "model_element =new " + _prototypeClass + "(model_element);";
+																//	eval(evalString);																
+																model_element=_createObjectByName(_prototypeClass,model_element);
 															}
 
 															newEntry = $
