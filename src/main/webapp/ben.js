@@ -52,7 +52,7 @@ BENJS.org.benjs.core = (function() {
 	console.debug('------------------------');
 
 	// private properties
-	var _appVersion='', _controllers = new Array(), _templates = new Array(), _routes = new Array(),
+	var _appVersion = '', _controllers = new Array(), _templates = new Array(), _routes = new Array(),
 
 	// private methods
 	createController = function(settings) {
@@ -156,73 +156,117 @@ BENJS.org.benjs.core = (function() {
 	/**
 	 * this method reads all input fields with the attribute 'data-ben-model'
 	 * inside the given controller section and updates the corresponding model
-	 * value. In case of a getter method the method calls the corresponding 
+	 * value. In case of a getter method the method calls the corresponding
 	 * setter method
 	 */
 	_read_section = function(selectorId, model) {
-		$(selectorId).find(':input').each(function() {
-			var modelValue, modelField, methodName;
+		$(selectorId).find(':input').each(
+				function() {
+					var modelValue, modelField, methodName;
 
-			// check if input is a data-ben-model
-			modelField = $(this).attr("data-ben-model");
-			if (modelField) {
-				modelField = modelField.trim();
-				modelValue = "";
-				
-				// test input fields
-				switch (this.type) {
-				case 'text':
-				case 'hidden':
-				case 'password':
-				case 'select-multiple':
-				case 'select-one':
-				case 'textarea':
-					modelValue = $(this).val();
-					break;
-				case 'checkbox':
-				case 'radio':
-					this.checked = false;
-				}
-				// check if data-ben-model is a getter method
-				if (modelField.match("^get[_a-zA-Z0-9.]+\\(")) {
-					try {
-						// convert get in set
-						modelField="set"+modelField.substring(3,modelField.length-1);
-						// test if setter method is defined
-						methodName=modelField.substring(0,modelField.indexOf('('));
-						if ($.isFunction(model[methodName])) {
-							modelField=modelField+",modelValue)";
-							eval('model.' + modelField);
-						} else {
-							console.warn("setter method '" + methodName + "' is not defined!");
+					// check if input is a data-ben-model
+					modelField = $(this).attr("data-ben-model");
+					if (modelField) {
+						modelField = modelField.trim();
+						modelValue = "";
+
+						// test input fields
+						switch (this.type) {
+						case 'text':
+						case 'hidden':
+						case 'password':
+						case 'select-multiple':
+						case 'select-one':
+						case 'textarea':
+							modelValue = $(this).val();
+							break;
+						case 'checkbox':
+						case 'radio':
+							this.checked = false;
 						}
-					} catch (err) {
-						console.error("Error calling setter-method '"
-								+ modelField + "' -> " + err.message);
+						// check if data-ben-model is a getter method
+						if (modelField.match("^get[_a-zA-Z0-9.]+\\(")) {
+							try {
+								// convert get in set
+								// modelField="set"+modelField.substring(3,modelField.length-1);
+								modelField = "set" + modelField.substring(3);
+								// test if setter method is defined
+								methodName = modelField.substring(0, modelField
+										.indexOf('('));
+								if ($.isFunction(model[methodName])) {
+									// modelField=modelField+",modelValue)";
+									// eval('model.' + modelField);
+									_executeFunctionByName(modelField, model,
+											modelValue);
+								} else {
+									console.warn("setter method '" + methodName
+											+ "' is not defined!");
+								}
+							} catch (err) {
+								console.error("Error calling setter-method '"
+										+ modelField + "' -> " + err.message);
+							}
+						} else {
+							model[modelField] = modelValue;
+						}
 					}
-				} else {
-					model[modelField] = modelValue;
-				}
-			}
-		});
+				});
 
 	},
 
-	
 	/*
-	 * helper method adds a version number to an url. Used by $.load() 
+	 * helper method adds a version number to an url. Used by $.load()
 	 */
 	_addAppVersion = function(url) {
 		if (_appVersion) {
-			if (url.indexOf('?')>-1) {
-				url=url+'&appVersion='+_appVersion;
+			if (url.indexOf('?') > -1) {
+				url = url + '&appVersion=' + _appVersion;
 			} else {
-				url=url+'?appVersion='+_appVersion;
+				url = url + '?appVersion=' + _appVersion;
 			}
 		}
 		return url;
 	},
-	
+
+	/*
+	 * helper method to call a model getter/setter method by name. The method
+	 * expects theh funtion name including the parameters
+	 * 
+	 * e.g. setValue('abc');
+	 * 
+	 * Optional additional params can be set which will be added to the function
+	 * call
+	 */
+	_executeFunctionByName = function(functionCall, context, params) {
+		var paramPos,methodName,args,fnparams,fn;
+		
+		paramPos = functionCall.indexOf('(');
+		methodName = functionCall.substring(0, paramPos);
+		args = functionCall.substring(paramPos + 1).trim();
+		args = args.substring(0, args.indexOf(')')).trim();
+		// first split the params...
+		fnparams = args.split(",");
+		if (params) {
+			fnparams.push(params);
+		}
+		// clean param value ....
+		$.each(fnparams, function(index, _obj) {
+			// string literal ?
+			if (_obj.indexOf("'") === 0 || _obj.indexOf('"') === 0) {
+				fnparams[index] = _obj.substring(1, _obj.length - 1);
+			} else {
+				// param is treated as string literal			
+			}
+		});
+
+		// find object
+		fn = context[methodName];
+		// is valid function?
+		if (typeof fn === "function") {
+			return fn.apply(null, fnparams);
+		}
+	},
+
 	/**
 	 * Start the ben Application
 	 */
@@ -234,15 +278,14 @@ BENJS.org.benjs.core = (function() {
 			config = {};
 		}
 		if (config.loadTemplatesOnStartup === undefined) {
-			config.loadTemplatesOnStartup=true;
+			config.loadTemplatesOnStartup = true;
 		}
 		if (config.appVersion === undefined) {
-			config.appVersion="";
+			config.appVersion = "";
 		}
-			
+
 		console.debug("configuration=", config);
-		_appVersion=config.appVersion;
-		
+		_appVersion = config.appVersion;
 
 		// first load views for all registered controllers and push the
 		// model....
@@ -311,7 +354,7 @@ BENJS.org.benjs.core = (function() {
 		 * Initializes the controller
 		 */
 		this.init = function(context) {
-				
+
 			this.foreachCache = new Array();
 			var selectorId = "[data-ben-controller='" + this.id + "']";
 			if ($(selectorId, context).length) {
@@ -375,10 +418,10 @@ BENJS.org.benjs.core = (function() {
 				}
 			}
 			if (url) {
-				
+
 				var selectorId = "[data-ben-controller='" + this.id + "']";
 
-				url=_addAppVersion(url);
+				url = _addAppVersion(url);
 
 				$(selectorId, searchcontext)
 						.each(
@@ -486,9 +529,7 @@ BENJS.org.benjs.core = (function() {
 					.each(
 							function() {
 
-								var parent, modelField, foreachID, foreachModel, forEachBlock, 
-									forEachBlockContent, resolveAs, 
-									_prototypeClass;
+								var parent, modelField, foreachID, foreachModel, forEachBlock, forEachBlockContent, resolveAs, _prototypeClass;
 
 								modelField = $(this).attr("data-ben-foreach");
 								foreachID = $(this).attr("data-ben-foreach-id");
@@ -523,18 +564,22 @@ BENJS.org.benjs.core = (function() {
 												+ foreachID);
 										forEachBlockContent = forEachBlock
 												.clone().html().trim();
-										
-										// if content block did not start with < or
-										// is no valid XHTML we surround the content 
-										// with a span to define a valid xhtml element
-										// we use the $().html() method to validate XHTML
+
+										// if content block did not start with <
+										// or
+										// is no valid XHTML we surround the
+										// content
+										// with a span to define a valid xhtml
+										// element
+										// we use the $().html() method to
+										// validate XHTML
 										if (forEachBlockContent.indexOf('<') != 0
-											||
-											!$(forEachBlockContent).html()) {
+												|| !$(forEachBlockContent)
+														.html()) {
 											forEachBlockContent = '<span>'
-												+ forEachBlockContent
-												+ '</span>';
-										}		
+													+ forEachBlockContent
+													+ '</span>';
+										}
 										// cach foreach content block now
 										that.foreachCache[foreachID] = forEachBlockContent;
 									}
@@ -661,9 +706,12 @@ BENJS.org.benjs.core = (function() {
 					if (modelField.match("^[_a-zA-Z0-9.]+\\(")) {
 						try {
 							// test if method is defined
-							methodName=modelField.substring(0,modelField.indexOf('('));
+							methodName = modelField.substring(0, modelField
+									.indexOf('('));
 							if ($.isFunction(model[methodName])) {
-								modelValue = eval('model.' + modelField);
+								// modelValue = eval('model.' + modelField);
+								modelValue = _executeFunctionByName(modelField,
+										model);
 							} else {
 								// no op - we just return an empty value
 							}
@@ -684,12 +732,12 @@ BENJS.org.benjs.core = (function() {
 					if (modelField === '.') {
 						modelValue = model;
 					} else {
-						if (!modelField.match("^model.")) {
-							modelField = "model." + modelField;
-						}
-						modelValue = eval(modelField);
+						//if (!modelField.match("^model.")) {
+						//	modelField = "model." + modelField;
+						//	}
+						//modelValue = eval(modelField);
 						// alternative code to avoid eval
-						// modelValue = model[modelField];
+						modelValue = model[modelField];
 					}
 				}
 
@@ -747,8 +795,7 @@ BENJS.org.benjs.core = (function() {
 
 			var selectorId = "[data-ben-template='" + that.id + "']";
 
-			
-			that.url=_addAppVersion(that.url);
+			that.url = _addAppVersion(that.url);
 
 			$(selectorId)
 					.each(

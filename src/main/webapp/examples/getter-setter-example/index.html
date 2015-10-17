@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Ben.js Demo</title>
+
+
+<link href="../../css/creatix-basic.css" rel="stylesheet" />
+<link href="../../css/creatix-forms.css" rel="stylesheet" />
+<link href="../../css/creatix-layout.css" rel="stylesheet" />
+<link href="../../css/custom.css" rel="stylesheet" />
+
+
+</head>
+
+<body>
+
+
+	<div id="container">
+
+
+		<h1>Ben.js - Getter-Setter-Example</h1>
+
+
+		<div class="row">
+			<div data-ben-controller="my-controller">
+				<h3>Form:</h3>
+				<dl>
+				
+				 
+					<dt>Firstname</dt>
+					<dd>
+						<input type="text" data-ben-model="getElement('firstname')" />
+					</dd>
+
+
+					<dt>Lastname</dt>
+					<dd>
+						<input type="text" data-ben-model="getElement('lastname')" />
+					</dd>
+
+				
+
+				</dl>
+
+
+				<input type="button" value="push model" onclick="Demo.push()"
+					class="btn" />
+					
+				<input type="button" value="pull model" onclick="Demo.pull()"
+					class="btn" />
+
+
+			</div>
+
+		</div>
+	</div>
+
+
+
+
+	<script type="text/javascript" src="../../lib/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="../../ben.js"></script>
+	<script type="text/javascript" src="app.js"></script>
+</body>
+
+</html>
