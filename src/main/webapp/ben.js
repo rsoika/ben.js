@@ -418,6 +418,16 @@ BENJS.org.benjs.core = (function() {
 			// callback
 			that.afterPull.fire(that, pullContext);
 		}
+		
+		
+		/**
+		 * This method pulls and immediately pushs the data of the model object
+		 * to refresh the controller section
+		 */
+		this.refresh = function(context) {
+			that.pull();
+			that.push();
+		}
 
 		/**
 		 * loads a the view for the current controller. If no URL is provided
