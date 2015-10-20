@@ -230,15 +230,19 @@ BENJS.org.benjs.core = (function() {
 
 	/*
 	 * helper method to call a model getter/setter method by name. The method
-	 * expects theh funtion name including the parameters
+	 * expects the function name including the parameters
 	 * 
 	 * e.g. setValue('abc');
 	 * 
 	 * Optional additional params can be set which will be added to the function
-	 * call
+	 * call. 
+	 * 
+	 * In addition the method also extract namespaces used for the method call
+	 * 
+	 * e.g. myobject.getValue('abc');
 	 */
 	_executeFunctionByName = function(functionCall, context, params) {
-		var paramPos,methodName,args,fnparams,fn;
+		var paramPos,methodName,args,fnparams,fn,namespaces,i;
 		
 		paramPos = functionCall.indexOf('(');
 		methodName = functionCall.substring(0, paramPos);
@@ -259,11 +263,16 @@ BENJS.org.benjs.core = (function() {
 			}
 		});
 
-		// find object
-		fn = context[methodName];
+		// extract namespaces...
+		namespaces = methodName.split(".");
+		methodName = namespaces.pop();
+		for(i = 0; i < namespaces.length; i++) {
+		    context = context[namespaces[i]];
+		}
+		
 		// is valid function?
+		fn = context[methodName];
 		if (typeof fn === "function") {
-			// null
 			return fn.apply(context, fnparams);
 		}
 	},
@@ -733,7 +742,7 @@ BENJS.org.benjs.core = (function() {
 		 *            modelobject
 		 */
 		this._render_element = function(selector, modelField, model) {
-			var modelAttribute, attrPos, modelValue;
+			var modelValue;
 			if (modelField) {
 				modelValue = that._extract_model_value(modelField, model);
 				if ( modelValue) {
@@ -767,13 +776,8 @@ BENJS.org.benjs.core = (function() {
 							// test if method is defined
 							methodName = modelField.substring(0, modelField
 									.indexOf('('));
-							if ($.isFunction(model[methodName])) {
-								// modelValue = eval('model.' + modelField);
-								modelValue = _executeFunctionByName(modelField,
+							modelValue = _executeFunctionByName(modelField,
 										model);
-							} else {
-								// no op - we just return an empty value
-							}
 						} catch (err) {
 							console.error("Error calling gettermethod '"
 									+ modelField + "' -> " + err.message);
