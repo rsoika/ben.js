@@ -15,12 +15,7 @@ Ben.JS is based on jQuery. To setup Ben.JS at least the latest jQuery version ne
     	   <script type="text/javascript" src="libs/ben.js"></script>
     	   <script type="text/javascript" src="app.js"></script>
     	   .....
-    	   <script>
-    	      $(document).ready(function() {
-    	      	var benJS=BENJS.org.benjs.core;
-				 benJS.start();
-			  });
-			</script>
+
 
 ## Examples
 This project includes a set of example pages giving an idea how to use Ben.JS. Just checkout the sources. The examples can run locally or be deploy as an application on a web server. 
