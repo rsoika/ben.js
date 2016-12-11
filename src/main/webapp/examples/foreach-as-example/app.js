@@ -41,9 +41,7 @@ BENJS.sample.app = (function() {
 	start = function() {
 		console.debug("starting application...");
 
-		// start view
-		benJS.start();
-
+		
 	};
 	
 	
@@ -58,7 +56,3 @@ BENJS.sample.app = (function() {
 }());
 
 var app = BENJS.sample.app;
-
-$(document).ready(function() {
-	app.start();
-});

@@ -44,6 +44,3 @@ DemoController.initWorkitem = function(f) {
 	this.push();
 }
 
-$(document).ready(function() {
-	benJS.start();
-});

@@ -22,7 +22,3 @@ var demoController = benJS.createController({
 	id : "my-controller",
 	model : new Company()
 });
-
-$(document).ready(function() {
-	benJS.start();
-});

@@ -48,11 +48,11 @@ BENJS.namespace("org.benjs.core");
 BENJS.org.benjs.core = (function() {
 
 	console.debug('------------------------');
-	console.debug('Ben.js: Version 0.3.0');
+	console.debug('Ben.js: Version 0.4.0');
 	console.debug('------------------------');
 
 	// private properties
-	var _appVersion = '', _controllers = new Array(), _templates = new Array(), _routes = new Array(),
+	var _config, _controllers = new Array(), _templates = new Array(), _routes = new Array(),
 
 	// private methods
 	createController = function(settings) {
@@ -218,11 +218,11 @@ BENJS.org.benjs.core = (function() {
 	 * helper method adds a version number to an url. Used by $.load()
 	 */
 	_addAppVersion = function(url) {
-		if (_appVersion) {
+		if (_config.appVersion) {
 			if (url.indexOf('?') > -1) {
-				url = url + '&appVersion=' + _appVersion;
+				url = url + '&appVersion=' + _config.appVersion;
 			} else {
-				url = url + '?appVersion=' + _appVersion;
+				url = url + '?appVersion=' + _config.appVersion;
 			}
 		}
 		return url;
@@ -296,22 +296,11 @@ BENJS.org.benjs.core = (function() {
 	/**
 	 * Start the ben Application
 	 */
-	start = function(config) {
+	start = function() {
+		if (_config === undefined) {
+			init();
+		}
 		console.debug("starting application...");
-
-		// set default settings
-		if (config === undefined) {
-			config = {};
-		}
-		if (config.loadTemplatesOnStartup === undefined) {
-			config.loadTemplatesOnStartup = true;
-		}
-		if (config.appVersion === undefined) {
-			config.appVersion = "";
-		}
-
-		console.debug("configuration=", config);
-		_appVersion = config.appVersion;
 
 		// first load views for all registered controllers and push the
 		// model....
@@ -321,13 +310,37 @@ BENJS.org.benjs.core = (function() {
 
 		// now load templates...
 		// _load_templates();
-		if (config.loadTemplatesOnStartup) {
+		if (_config.loadTemplatesOnStartup) {
 			$.each(_templates, function(index, templ) {
 				templ.load();
 			});
 		}
 	},
 
+	
+	/**
+	 * initializes the ben Application
+	 */
+	init = function(configuration) {
+		console.debug("init application...");
+
+		// set default settings
+		if (configuration === undefined) {
+			_config = {};
+		} else {
+			_config=configuration;
+		}
+		if (_config.loadTemplatesOnStartup === undefined) {
+			_config.loadTemplatesOnStartup = true;
+		}
+		if (_config.appVersion === undefined) {
+			_config.appVersion = "";
+		}
+
+		console.debug("configuration=", _config);
+	},
+	
+	
 	/**
 	 * Controller object
 	 * 
@@ -997,6 +1010,7 @@ BENJS.org.benjs.core = (function() {
 	// public API
 	return {
 		start : start,
+		init : init,
 
 		createController : createController,
 		createTemplate : createTemplate,
@@ -1006,3 +1020,8 @@ BENJS.org.benjs.core = (function() {
 		findTemplateByID : findTemplateByID
 	};
 }());
+
+
+$(document).ready(function() {
+	BENJS.org.benjs.core.start();
+});

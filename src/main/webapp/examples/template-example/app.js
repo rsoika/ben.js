@@ -10,6 +10,10 @@ function Company() {
 	this.employers.push(new Employee('Sam', 'Berlin', '20.7.2015'));
 	this.employers.push(new Employee('Douglas', 'Hamburg', '21.7.2015'));
 	this.test = "Example Value";
+	
+	this.getCount = function() {
+		return this.employers.length;
+	}
 
 }
 
@@ -24,8 +28,6 @@ var DemoTemplate = benJS.createTemplate({
 	url : "view.html"
 });
 
-$(document).ready(function() {
-	benJS.start({
+benJS.init({
 		appVersion : "1.0.0"
-	});
 });

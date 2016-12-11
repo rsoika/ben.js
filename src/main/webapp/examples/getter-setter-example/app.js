@@ -25,7 +25,3 @@ var Demo = benJS.createController({
 	id : "my-controller",
 	model : new Entity()
 });
-
-$(document).ready(function() {
-	benJS.start();
-});

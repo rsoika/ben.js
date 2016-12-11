@@ -20,7 +20,3 @@ var Demo = benJS.createController({
 	model : new Employee('Anna', 'Munich', '19.7.2015',
 			'some custom text example...')
 });
-
-$(document).ready(function() {
-	benJS.start();
-});

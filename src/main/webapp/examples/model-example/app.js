@@ -11,7 +11,3 @@ var Demo = benJS.createController({
 	id : "my-controller",
 	model : new Employee('Anna', 'Munich', '19.7.2015')
 });
-
-$(document).ready(function() {
-	benJS.start();
-});
